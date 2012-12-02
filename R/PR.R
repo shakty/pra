@@ -195,8 +195,8 @@ dev.off()
 ################
 
 #pr.setwd(datadir, 'coo_rnd_orig');
-#pr.setwd(datadir, 'coo');
-pr.setwd(datadir, 'com');
+pr.setwd(datadir, 'coo');
+#pr.setwd(datadir, 'com');
 
 # Within same exhibition
 ########################
@@ -233,18 +233,67 @@ dev.off()
 
 #######################
 
+
+
+# Between exhibition
+########################
+
+diffBetweenEx <- read.csv(file="./diff/same_ex/diff_subs_ex_from_ex_by_ex.csv", head=TRUE, sep=",")
+summary(diffBetweenEx)
+
+my.ts.panel <- function(x, col = col, bg = bg, pch = pch, type = type,  vpos=8.75, ...) {
+   lines(x, col = col, bg = bg, pch = pch, type = type, ...)                
+   fit <- lm(x ~ seq(1:30))
+   abline(fit, col="2", lty=2)
+}
+
+jpeg('diff/same_ex/img/diff_subs_ex_from_ex.jpg', quality=100, width=600)
+
+plot.ts(diffBetweenEx,
+        type='o',
+        main="Average exhibition specialization per round",
+        ylab="Normalized (0-1) face difference",
+        xlab="Rounds",
+        panel=my.ts.panel)
+
+dev.off()
+
+# Only published ones
+diffSameEx.pub <- read.csv(file="./diff/same_ex/diff_pubs_by_ex.csv", head=TRUE, sep=",")
+summary(diffSameEx.pub)
+
+jpeg('diff/same_ex/img/diff_pubs_ex.jpg', quality=100, width=600)
+plot.ts(diffSameEx.pub,
+        type='o',
+        main="Average difference of paintings published in the same exhibition per round",
+        ylab="Normalized (0-1) face difference",
+        panel=my.ts.panel)
+dev.off()
+
+#######################
+
+#pr.setwd(datadir, 'coo_rnd_orig');
+pr.setwd(datadir, 'coo');
+#pr.setwd(datadir, 'com');
+
 # player with the previous submission      
 diffFacesPlayers <- read.csv(file="./diff/global/diff_faces_x_round_x_player_self.csv", head=TRUE, sep=",")
 summary(diffFacesPlayers)
+
 
 jpeg('diff/global/img/diff_faces_x_round_x_player_self.jpg', quality=100, width=600)      
 boxplot(diffFacesPlayers, main="Distributions of difference between two subsequent submissions")
 dev.off()
 
-
 # mean x round
-avgRoundFaceDiffPrevious = rowMeans(diffFacesPlayers, na.rm = FALSE, dims = 1)
-plot.ts(avgRoundFaceDiffPrevious, type='o', main="Average face difference per round", ylab="Normalized (0-1) face difference")
+diffFacesPlayers.clean = diffFacesPlayers[-1] # for aggregated data
+avgRoundFaceDiffPrevious = rowMeans(diffFacesPlayers.clean, na.rm = FALSE, dims = 1)
+
+jpeg('diff/global/img/diff_faces_x_round_x_player_self_detail.jpg', quality=100, width=600)  
+plot.ts(avgRoundFaceDiffPrevious, type='o', main="Average face innovation per round", ylab="Normalized (0-1) face difference")
+fit <- lm(avgRoundFaceDiffPrevious ~ seq(1:length(avgRoundFaceDiffPrevious)))
+abline(fit, col="2", lty=2)
+dev.off()
 
 
 plot.ts(diffFacesPlayers, type='o', ylim=rep(c(0,200),9))
@@ -259,14 +308,24 @@ summary(avgDiffFacesPlayers)
 boxplot(avgDiffFacesPlayers)
 
 # mean x round
-avgRoundFaceDiff = rowMeans(avgDiffFacesPlayers, na.rm = FALSE, dims = 1)
+avgdiffFacesPlayers.clean = avgDiffFacesPlayers[-1] # for aggregated data
+avgRoundFaceDiff = rowMeans(avgdiffFacesPlayers.clean, na.rm = FALSE, dims = 1)
+
+jpeg('diff/global/img/diff_faces_x_round_x_player_mean_detail.jpg', quality=100, width=600)
 plot.ts(avgRoundFaceDiff, type='o', main="Average face difference per round", ylab="Normalized (0-1) face difference")
-      
+fit <- lm(avgRoundFaceDiff ~ seq(1:length(avgRoundFaceDiff)))
+abline(fit, col="2", lty=2)
+dev.off()
+
+
 plot.ts(avgDiffFacesPlayers, type='o',ylim=rep(c(0,200),4))
 
 plot.ts(avgDiffFacesPlayers, type='o', col = colors, ylim=range(avgDiffFacesPlayers), plot.type="single")
 legend(0.5,0.5, colnames(diffFacesPlayers), col = colors, lty = rep(1,9), lwd = rep (2,9), ncol = 3)
 
+
+
+pr.setwd(datadir, 'coo');
 
 # Features grouped in parts
 plotDiffFeaturesDir("./diff/global/") 

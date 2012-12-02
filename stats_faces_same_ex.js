@@ -27,12 +27,16 @@ function stats_faces_pub(DIR) {
 	////////////////////////////////////
 	
 	
-//	console.log(db.first())
-	
 	/// BEGIN
 	
-	// Every round with all the previous ones
+//	writeRoundStatsByEx('csv/diff/same_ex/diff_subs_by_ex', computeDiffSubmittedFaces);
+//	
+//	writeRoundStatsByEx('csv/diff/same_ex/diff_pubs_by_ex', computeDiffPublishedFaces);
+	
+	writeRoundStatsByEx('csv/diff/same_ex/diff_subs_ex_from_ex_by_ex', computeDiffSubmittedFacesBetweenExhibitions);
 
+	
+	// First-order functions
 	
 	function computeDiffSubmittedFaces(round, ex) {
 		//console.log(round, ex);
@@ -48,26 +52,32 @@ function stats_faces_pub(DIR) {
 		return ('undefined' === typeof faces || !faces.length || faces.length === 1) ? 'NA' : getAvgFaceDistance(faces);
 	}
 	
-	writeRoundStatsByEx('csv/diff/same_ex/diff_subs_by_ex', computeDiffSubmittedFaces);
-	
-	writeRoundStatsByEx('csv/diff/same_ex/diff_pubs_by_ex', computeDiffPublishedFaces);
-	
+	function computeDiffSubmittedFacesBetweenExhibitions(round, ex) {
+		var set, faces, other_faces = [];
+		if (ex === 'A') { 
+			set = ['B','C']; 
+		}
+		else if (ex === 'B') {
+			set = ['A','C'];
+		}
+		else {
+			set = ['B','A'];
+		}
+		// faces submitted to other exhibitions
+		J.each(set, function(ex) {
+			other_faces = other_faces.concat(getSubmittedFacesByEx(ex, round).fetch());
+		});
+		// faces in ex of reference
+		faces = getSubmittedFacesByEx(ex, round).fetch();
 		
-
+		if ('undefined' === typeof faces || !faces.length || faces.length === 1) return 'NA';
+		if ('undefined' === typeof other_faces || !other_faces.length || other_faces.length === 1) return 'NA';
+		
+		return getAvgFaceDistanceGroupFromGroup(faces, other_faces);
+	}
 	
-//	// Every round with the immediately previous one
-//	writePreviousRoundStats();
-//	
-//	// All the entries, distance from published faces at R-1 and their score
-//	correlateDistanceAndScore();
-//	correlateDistanceAndScoreCopy();
-//	
-//	//Every round with all the previous one
-//	writeCumulativeRoundStats();
 	
-//	var cumulative = (ACTION == 'CUMULATIVE') ? true : false;
-	
-	/// END
+	/// Support functions
 	
 	function getPublishedFaces(round, cumulative) {
 		if (!round) return false;
@@ -152,6 +162,16 @@ function stats_faces_pub(DIR) {
 			diffs += weightedFaceDistance(face.value, e.value);
 		});
 		return diffs / group.length;
+	}
+	
+	function getAvgFaceDistanceGroupFromGroup(group1, group2) {
+		var diffs = 0;
+		
+		J.each(group1, function(face){
+			diffs += getAvgFaceDistanceFromGroup(face, group2);
+		});
+		
+		return diffs / group1.length;
 	}
 
 	

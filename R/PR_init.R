@@ -9,7 +9,7 @@ pr.setwd <- function(DIR, session){
   getwd()
 }
 
-datadir <- '/home/stefano/PR3/analysis/data/'
+datadir <- '/home/stefano/PR4/analysis/data/'
 
 #session <- 'com_sel'
 #session <- 'coo_rnd_orig'
@@ -45,6 +45,10 @@ exhs.colors = c("green", "red", "darkblue")
 plotDiffFeatures <- function(dir, file) {
   fileName = sprintf("./%s/%s", dir, file)
   diffs <- read.csv(file=fileName, head=TRUE, sep=",")
+
+  # remove first column (for aggregated results)
+  diffs = diffs[-1]
+  
   summary(diffs)
   # Boxplot
   imgName = sprintf("%s/img/%s%s", dir, file, "_boxplot.jpg")
@@ -138,6 +142,22 @@ read.tables <- function(files, ...) {
 
   return(df)
 }
+
+read.tables.H <- function(files, ...) {
+ 
+  for (f in files) {
+      csv <- read.csv(file=f, head=TRUE, sep=",")
+      if (!exists("df.h")) {
+        df.h <- csv
+      }
+      else {
+        df.h <- cbind(df.h, csv)
+      }
+  }
+
+  return(df.h)
+}
+
 
 createFileList <- function(file, DIR, sessions) {
   files <- list()

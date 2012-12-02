@@ -4,7 +4,7 @@
 mergeDatasets <- function(file, DIR, sessions, out.dir) {
   
   files <- createFileList(file, datadir, sessions)
-  files
+  #return(files)
 
   data <- read.tables(files)
   
@@ -13,10 +13,29 @@ mergeDatasets <- function(file, DIR, sessions, out.dir) {
   write.csv(data, out)
 }
 
+mergeDatasets.H <- function(file, DIR, sessions, out.dir) {
+  
+  files <- createFileList(file, datadir, sessions)
+  #return(files)
 
-mergeDatasets('ingroup/all_reviews.csv', datadir, sessions.coo, 'coo')
+  data <- read.tables.H(files)
+  
+  out <- sprintf("%s%s/csv/%s", DIR, out.dir, file)
+  
+  write.csv(data, out)
+}
 
-mergeDatasets('ingroup/all_reviews.csv', datadir, sessions.com, 'com')
+
+
+#mergeDatasets('ingroup/all_reviews.csv', datadir, sessions.coo, 'coo')
+#mergeDatasets('ingroup/all_reviews.csv', datadir, sessions.com, 'com')
+
+mergeDatasets.H('diff/global/diff_faces_x_round_x_player_mean.csv', datadir, sessions.com, 'com')
+mergeDatasets.H('diff/global/diff_faces_x_round_x_player_mean.csv', datadir, sessions.coo, 'coo')
+
+mergeDatasets.H('diff/global/diff_faces_x_round_x_player_self.csv', datadir, sessions.com, 'com')
+mergeDatasets.H('diff/global/diff_faces_x_round_x_player_self.csv', datadir, sessions.coo, 'coo')
+
 
 
 getCommonDatasets <- function(DIR, sessions) {
