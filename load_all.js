@@ -18,6 +18,9 @@ var DIR = './data/com_sel/';
 //var DIR = './data/com_rnd_fake/';
 //var DIR = './data/coo_sel_err/';
 
+
+var DIR = './data/com_rand_25_jan_2013/';
+
 //var DIR = './data/sample/';
 ///////////////////////
 
@@ -26,10 +29,10 @@ var DIR = './data/com_sel/';
 
 //load_subs(DIR);
 
-load_evas(DIR);
+//load_evas(DIR);
 
 //load_copies(DIR);
 
 // Ingroup
-//load_reviews(DIR);
+load_reviews(DIR);
 

@@ -27,7 +27,6 @@ function create_html_exh(DIR, ONLY_PUBLISHED) {
 	});
 	
 	
-	
 	db.load(DIR + 'all_cf_sub_eva.nddb');
 	
 	db.each(function(e){
