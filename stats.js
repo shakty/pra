@@ -1,4 +1,4 @@
-var create = require('./lib/create_html/create_html_all');
+var stats = require('./lib/load/stats_all');
 
 var DIR = './data/com_sel/';
 //var DIR = './data/coo_rnd_orig/';
@@ -12,4 +12,4 @@ var DIR = './data/com_rand_25_jan_2013/';
 ///////////////////////
 
 
-create.create_html_all(DIR);
+stats.stats_all(DIR);
