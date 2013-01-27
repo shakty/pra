@@ -161,7 +161,7 @@ pr.combine = function (dirs, outdir, dbfile) {
 
 
 pr.pl = function (DIR) {
-	var pl = this.pl = new NDDB();	
+	var pl = new NDDB();	
 	pl.h('id', function(gb) { return gb.id;});
 	pl.load(DIR + 'PL.nddb');
 	pl.sort('pc');
