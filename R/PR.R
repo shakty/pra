@@ -1,10 +1,11 @@
 # Init
 #source('PR_init.R')
 
+pr.setwd(datadir, session);
 
 ## Publications
 ###############
-pr.setwd(datadir, 'com_sel');
+#pr.setwd(datadir, 'com_sel');
 
 subPlayers <- read.csv(file="./pubs/pubs_x_round_x_player.csv", head=TRUE, sep=",")
 subPlayers.count <- apply(subPlayers, 2, sum)
@@ -27,7 +28,7 @@ dev.off()
 
 players <- read.csv(file="./eva/eva_x_player.csv", head=TRUE, sep=",")
 summary(players)
-boxplot(players)
+#boxplot(players)
 
 #players.ohne3 <- players[, !names(players) %in% c('P_03')]
 #summary(players.ohne3)
@@ -117,24 +118,21 @@ dev.off()
 winlose <- read.table(file="win_lose/win_lose_all.csv", head=TRUE, sep=",")
 head(winlose)
 
-qplot(P_02_ex, shape=as.factor(P_02_pub), data=winlose)
+#qplot(P_02_ex, shape=as.factor(P_02_pub), data=winlose)
 
+# test qplot??
 
 geom_line(aes(group=1), colour="#000099") +  # Blue lines
-
 geom_point(size=3, colour="#CC0000")         # Red dots
-
 theme_blank() 
 qplot(data=winlose, ex, color=as.factor(published), shape=ex) 
 
 #facets= round ~ player
 
-
-filepath<-"http://dl.dropbox.com/u/1648032/ggplot2_tutorial_dataset.txt"
+#filepath<-"http://dl.dropbox.com/u/1648032/ggplot2_tutorial_dataset.txt"
 #read in the tab delimited text file using the url() function
-myData<-read.table(file=url(filepath),header=T,sep="\t")
-
-qplot(data=myData,x=BM,y=var1,log="xy",color=Tribe,facets = Hab~Tribe)
+#myData<-read.table(file=url(filepath),header=T,sep="\t")
+#qplot(data=myData,x=BM,y=var1,log="xy",color=Tribe,facets = Hab~Tribe)
 
 
 # x round (not working well)
@@ -195,7 +193,7 @@ dev.off()
 ################
 
 #pr.setwd(datadir, 'coo_rnd_orig');
-pr.setwd(datadir, 'coo');
+#pr.setwd(datadir, 'coo');
 #pr.setwd(datadir, 'com');
 
 # Within same exhibition
@@ -273,7 +271,7 @@ dev.off()
 #######################
 
 #pr.setwd(datadir, 'coo_rnd_orig');
-pr.setwd(datadir, 'coo');
+#pr.setwd(datadir, 'coo');
 #pr.setwd(datadir, 'com');
 
 # player with the previous submission      
@@ -296,16 +294,17 @@ abline(fit, col="2", lty=2)
 dev.off()
 
 
-plot.ts(diffFacesPlayers, type='o', ylim=rep(c(0,200),9))
-
-plot.ts(diffFacesPlayers, type='o', ylim = c(0,0.6), plot.type="single",  col = colors)
-legend(0.5,0.6, colnames(diffFacesPlayers), col = colors, lty = rep(1,9), lwd = rep (2,9), ncol = 3)
+# TODO: Check if this is printed somewhere else??
+#plot.ts(diffFacesPlayers, type='o', ylim=rep(c(0,200),9))
+#
+#plot.ts(diffFacesPlayers, type='o', ylim = c(0,0.6), plot.type="single",  col = colors)
+#legend(0.5,0.6, colnames(diffFacesPlayers), col = colors, lty = rep(1,9), lwd = rep (2,9), ncol = 3)
 
 
 # player with the average submission of the round
 avgDiffFacesPlayers <- read.csv(file="./diff/global/diff_faces_x_round_x_player_mean.csv", head=TRUE, sep=",")
 summary(avgDiffFacesPlayers)
-boxplot(avgDiffFacesPlayers)
+#boxplot(avgDiffFacesPlayers)
 
 # mean x round
 avgdiffFacesPlayers.clean = avgDiffFacesPlayers[-1] # for aggregated data
@@ -317,15 +316,15 @@ fit <- lm(avgRoundFaceDiff ~ seq(1:length(avgRoundFaceDiff)))
 abline(fit, col="2", lty=2)
 dev.off()
 
-
-plot.ts(avgDiffFacesPlayers, type='o',ylim=rep(c(0,200),4))
-
-plot.ts(avgDiffFacesPlayers, type='o', col = colors, ylim=range(avgDiffFacesPlayers), plot.type="single")
-legend(0.5,0.5, colnames(diffFacesPlayers), col = colors, lty = rep(1,9), lwd = rep (2,9), ncol = 3)
-
+# TODO: Check if this is printed somewhere else??
+#plot.ts(avgDiffFacesPlayers, type='o',ylim=rep(c(0,200),4))
+#plot.ts(avgDiffFacesPlayers, type='o', col = colors, ylim=range(avgDiffFacesPlayers), plot.type="single")
+#legend(0.5,0.5, colnames(diffFacesPlayers), col = colors, lty = rep(1,9), lwd = rep (2,9), ncol = 3)
 
 
-pr.setwd(datadir, 'coo');
+##############
+# Face diffs
+#pr.setwd(datadir, 'coo');
 
 # Features grouped in parts
 plotDiffFeaturesDir("./diff/global/") 
@@ -509,8 +508,8 @@ mtext(txt, side = 1, outer=FALSE, padj=5)
 par(old)
 dev.off()
 
-library(ggplot2)
-qplot(score, data=ingroup,col = as.factor(ingroup$same), beside=TRUE)
+#library(ggplot2)
+#qplot(score, data=ingroup,col = as.factor(ingroup$same), beside=TRUE)
 
 
 ingroup.players <- read.csv(file="./ingroup/player_reviews.csv", head=TRUE, sep=",")
@@ -536,7 +535,7 @@ dev.off()
 # mean eva for submitting to the same exhibition or not
 #######################################################
 
-pr.setwd(datadir, 'coo');
+#pr.setwd(datadir, 'coo');
 #pr.setwd(datadir, 'com');
 
 
@@ -554,7 +553,7 @@ ingroup.otherex.changed <- ingroup.otherex[ingroup.otherex$changed == 1,]
 head(ingroup.otherex)
 
 
-plot.ts(ingroup.sameex$score)
+#plot.ts(ingroup.sameex$score)
 
 stats.inex = summary(ingroup.sameex$score); stats.inex
 stats.outex = summary(ingroup.otherex$score); stats.outex
@@ -602,7 +601,7 @@ mtext("Review scores for in-group and out-group (color)", outer = TRUE )
 par(old)
 #dev.off()
 
-#jpeg('./ingroup/img/reviews_in_out_boxplot.jpg', quality=100, width=600)
+jpeg('./ingroup/img/reviews_in_out_boxplot.jpg', quality=100, width=600)
 old = par(oma = c(3,0,0,0))
 boxplot(cbind(ingroup=ingroup.sameex$score, outgroup=ingroup.otherex$score),
         main="Distribution of review scores for ingroup and outgroup (color)",
@@ -611,9 +610,9 @@ txt = sprintf('In-mean = %f, Out-mean = %f, t(%i) = %f, p < .05', meanIn, meanOu
 #txt = 'Difference is statistically not significant p < .1'
 #mtext(txt, side = 1, outer=FALSE, padj=5)
 par(old)
-#dev.off()
+dev.off()
 
-qplot(score, data=ingroup,col = as.factor(ingroup$sameex), beside=TRUE)
+#qplot(score, data=ingroup,col = as.factor(ingroup$sameex), beside=TRUE)
 
 
 ingroup.players <- read.csv(file="./ingroup/player_reviews.csv", head=TRUE, sep=",")
