@@ -1,4 +1,4 @@
-var stats = require('./lib/load/stats_all');
+var stats = require('./lib/stats/stats_all');
 
 var DIR = './data/com_sel/';
 //var DIR = './data/coo_rnd_orig/';
