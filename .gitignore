@@ -1,0 +1,7 @@
+.project
+.settings
+data
+*.csv
+*.nddb
+
+node_modules
