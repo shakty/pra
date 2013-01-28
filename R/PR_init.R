@@ -3,10 +3,18 @@ rm(list=ls())
 
 library(ggplot2)
 
+
+scriptdir <- getwd(); scriptdir
+
 pr.setwd <- function(DIR, session){
   DATADIR = sprintf("%s%s/csv/", DIR, session)
   setwd(DATADIR)
   getwd()
+}
+
+pr.source <- function(sourcefile) {
+ FULLSOURCE = sprintf("%s/%s", scriptdir, sourcefile)
+ source(FULLSOURCE)
 }
 
 datadir <- '/home/stefano/pra/data/'
@@ -176,4 +184,8 @@ getCSVPath <- function(DIR, session) {
 
 getFilePath <- function(DIR, session, file) {
   return(sprintf("%s%s/csv/%s", DIR, session, file))
+}
+
+plotSingleInOutTS <- function(name){
+  fileName = sprintf("./ingroup/img/%s.jpg", name)
 }

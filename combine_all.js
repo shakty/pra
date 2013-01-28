@@ -4,7 +4,7 @@ var fs = require('fs'),
 	NDDB = require('NDDB').NDDB,
 	J = require('./../node_modules/NDDB/node_modules/JSUS/jsus.js').JSUS,
 	d3 = require('d3'),
-	pr_stats = require('./pr_stats');
+	pra = require('./pr_stats');
 
 
 
@@ -24,9 +24,9 @@ var sel = [
            
 ];
 
-pr_stats.combine(com, 'data/com/', 'pr_full.nddb');
-pr_stats.combine(com, 'data/com/', 'PL.nddb');
+pra.combine(com, 'data/com/', 'pr_full.nddb');
+pra.combine(com, 'data/com/', 'PL.nddb');
 
 
-pr_stats.combine(coo, 'data/coo/', 'pr_full.nddb');
-pr_stats.combine(coo, 'data/coo/', 'PL.nddb');
+pra.combine(coo, 'data/coo/', 'pr_full.nddb');
+pra.combine(coo, 'data/coo/', 'PL.nddb');

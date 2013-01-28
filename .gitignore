@@ -5,3 +5,5 @@ data
 *.nddb
 
 node_modules
+
+*~
