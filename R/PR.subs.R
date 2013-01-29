@@ -1,11 +1,15 @@
 # Submissions
 #############
 
-#pr.setwd(datadir, session);
+#pr.setwd(datadir, 'com_sel_25_jan_2013');
 
 # x player
 subPlayers <- read.table(file="./sub/sub_x_round_x_player.csv", head=TRUE, sep=",")
 subPlayers
+
+for (i in names(subPlayers)) {
+  subPlayers[[i]] <- factor(subPlayers[[i]], levels=c("A","B","C"))
+}
 
 jpeg('sub/img/players_sub_ts.jpg',quality=100,width=600)
 plot.ts(subPlayers,type='o', plot.type="multiple", main='Exhibition choice over 30 rounds')
@@ -18,13 +22,20 @@ dev.off()
 #subPlayers.int.jitter = apply(subPlayers.int, 2, jitter, amount=0.05)
 #plot.ts(subPlayers.int.jitter, type='p', plot.type="single")
 
+
 playerSubs <- apply(subPlayers, 2, table)
+
+# Hack if some dimension is not full
+playerSubs$P_09 <- table(subPlayers$P_09)
+
 playerSubs
+
 
 #oldpar = par(mar=c(5,4,4,8), xpd=T)
 #par(oldpar)
 
 jpeg('sub/img/player_subs_all.jpg',quality=100,width=600)
+
 barplot(playerSubs,
         col = brewer.pal(3,"Set1"),
         border="white",
@@ -32,6 +43,7 @@ barplot(playerSubs,
         main='Players submissions by exhibition',
         legend.text = c('A','B','C'),
         args.legend = list(bty="n", horiz=TRUE, x="top"))
+
 dev.off()
 
 winlose <- read.table(file="win_lose/win_lose_all.csv", head=TRUE, sep=",")

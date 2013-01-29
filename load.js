@@ -7,6 +7,7 @@ var DIR = './data/com_sel/';
 
 
 var DIR = './data/com_rand_25_jan_2013/';
+var DIR = './data/com_sel_25_jan_2013/';
 
 //var DIR = './data/sample/';
 ///////////////////////

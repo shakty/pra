@@ -24,8 +24,10 @@ datadir <- '/home/stefano/pra/data/'
 session <- 'com_rnd_fake'
 session <- 'coo_sel_err'
 session <- 'com_rand_25_jan_2013'
+session <- 'com_sel_25_jan_2013'
 
-sessions.com <- c('com_sel','com_rnd_fake', 'com_rand_25_jan_2013')
+
+sessions.com <- c('com_sel','com_rnd_fake', 'com_rand_25_jan_2013', 'com_sel_25_jan_2013')
 sessions.coo <- c('coo_rnd_orig', 'coo_sel_err')
 
 # combined sessions
