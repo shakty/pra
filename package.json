@@ -6,11 +6,14 @@
         { "name": "Stefano Balietti", "email": "futur.dorko@gmail.com" }
     ]
   , "engines": { "node": ">= 0.4.0" }
-	, "dependencies": { "ya-csv": ">= 0.9.0",
-	                     "NDDB": ">= 0.2.0",
-	                     "canvas": ">= 0.12.0",
-			     "commander": "1.0.0",
-			     "d3":	">= 2.9.2",
-			     "nodegame-client": ">= 0.5.0"
-                    }
+	, "dependencies": { 
+	     "ya-csv": ">= 0.9.0",
+	     "NDDB": ">= 0.2.0",
+	     "canvas": ">= 0.12.0",
+			 "commander": "1.0.0",
+			 "d3":	"2.10.3",
+			 "nodegame-client": ">= 0.5.0",
+			 "JSUS": ">= 0.5.0",
+			 "public": "git://github.com/shakty/pra-core.git#master"
+    }
 }
