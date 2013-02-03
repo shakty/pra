@@ -4,8 +4,6 @@
 #pr.setwd(datadir, 'coo');
 #pr.setwd(datadir, 'com');
 
-
-
 ingroup <- read.csv(file="./ingroup/all_reviews.csv", head=TRUE, sep=",")
 head(ingroup)
 

@@ -9,8 +9,13 @@ var DIR = './data/com_sel/';
 var DIR = './data/com_rand_25_jan_2013/';
 var DIR = './data/com_sel_25_jan_2013/';
 
-//var DIR = './data/sample/';
+var DIR = './data/coo_rand_30_jan_2013/';
+var DIR = './data/coo_rand_30_jan_2013/';
+
+var DIR = './data/com_choice_31_jan_2013/';
+
+
 ///////////////////////
 
 
-load.load_all(DIR);
+load.load_all(DIR, true); // true prints faces also

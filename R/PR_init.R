@@ -23,12 +23,79 @@ datadir <- '/home/stefano/pra/data/'
 #session <- 'coo_rnd_orig'
 session <- 'com_rnd_fake'
 session <- 'coo_sel_err'
+
+# 25 Jan 2013
 session <- 'com_rand_25_jan_2013'
-session <- 'com_sel_25_jan_2013'
+session <- 'com_choice_25_jan_2013'
+
+# 30 Jan 2013
+session <- 'coo_rand_30_jan_2013'
+session <- 'coo_choice_30_jan_2013'
+
+# 31 Jan 2013
+session <- 'com_choice_31_jan_2013'
+session <- 'coo_rand_31_jan_2013'
+
+# 1 Feb 2013
+session <- 'com_rand_1_feb_2013'
+session <- 'coo_choice_1_feb_2013'
+
+sessions.com <- c('com_sel',
+                  'com_rnd_fake',
+                  'com_rand_25_jan_2013',
+                  'com_choice_25_jan_2013',
+                  'com_choice_31_jan_2013',
+                  'com_rand_1_feb_2013')
+
+sessions.coo <- c('coo_rnd_orig',
+                  'coo_sel_err',
+                  'coo_rand_30_jan_2013',
+                  'coo_choice_30_jan_2013',
+                  'coo_rand_31_jan_2013',
+                  'coo_choice_1_feb_2013')
+
+sessions <- c(
+              # PRETEST
+              'coo_rand_orig',
+              'coo_choice_err',
+              'com_choice_good',
+              'com_rand_fake',
+              # 25 JAN 2013
+              'com_rand_25_jan_2013',
+              'com_choice_25_jan_2013',
+              # 30 JAN 2013
+              'coo_rand_30_jan_2013',
+              'coo_choice_30_jan_2013',
+              # 31 JAN 2013
+              'com_choice_31_jan_2013',
+              'coo_rand_31_jan_2013',
+              # 1 FEB 2013
+              'com_rand_1_feb_2013',
+              'coo_choice_1_feb_2013'
+              )
 
 
-sessions.com <- c('com_sel','com_rnd_fake', 'com_rand_25_jan_2013', 'com_sel_25_jan_2013')
-sessions.coo <- c('coo_rnd_orig', 'coo_sel_err')
+treatments <- c('coo', 'com', 'choice', 'rand')
+
+
+for (s in sessions) {  
+  for (t in treatments) {
+    #regex <- paste0('\\', t)
+    if (length(grep(t, s)) > 0) {
+      mySession <- paste0("session.", t)
+      if (!exists(mySession)) {
+        assign(mySession, c(s))
+      }
+      else {
+        assign(mySession, c(get(mySession), s))
+      }
+    }
+  }
+}
+
+
+  
+
 
 # combined sessions
 #session <- 'coo'

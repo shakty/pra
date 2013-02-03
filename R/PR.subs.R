@@ -30,7 +30,6 @@ playerSubs$P_09 <- table(subPlayers$P_09)
 
 playerSubs
 
-
 #oldpar = par(mar=c(5,4,4,8), xpd=T)
 #par(oldpar)
 
