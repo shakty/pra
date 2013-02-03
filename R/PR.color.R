@@ -60,11 +60,11 @@ dev.off()
 
 jpeg('./ingroup/img/reviews_in_out_boxplot.jpg', quality=100, width=600)
 old = par(oma = c(3,0,0,0))
-boxplot(cbind(ingroup=ingroup.same$score, outgroup=ingroup.other$score),
+boxplot(list(ingroup=ingroup.same$score, outgroup=ingroup.other$score),
         main="Distribution of review scores for ingroup and outgroup (color)",
         ylab="Score")
 txt = sprintf('In-mean = %f, Out-mean = %f, t(%i) = %f, p < .05', meanIn, meanOut, (n-1), test)
-txt = 'Difference is statistically not significant p < .1'
+#txt = 'Difference is statistically not significant p < .1'
 mtext(txt, side = 1, outer=FALSE, padj=5)
 par(old)
 dev.off()

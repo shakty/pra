@@ -6,7 +6,7 @@ library(car)
 library(plm)
 
 ############################
-pr.setwd(datadir, 'com_sel');
+pr.setwd(datadir, 'com_choice_good');
 
 winlose <- read.csv(file="./win_lose/win_lose_all.csv", head=TRUE, sep=",")
 head(winlose, n=10)

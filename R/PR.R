@@ -1,6 +1,18 @@
 # Init
 source('PR_init.R')
 
+session <- 'coo_choice_1_feb_2013'
+session <- 'com_rand_1_feb_2013'
+
+session <- 'coo_rand_31_jan_2013'
+session <- 'com_choice_31_jan_2013'
+
+session <- 'coo_choice_30_jan_2013'
+session <- 'coo_rand_30_jan_2013'
+
+session <- 'com_rand_25_jan_2013'
+session <- 'com_choice_25_jan_2013'
+
 pr.setwd(datadir, session);
 
 ## Publications

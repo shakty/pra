@@ -1,7 +1,9 @@
 # Submissions
 #############
 
-#pr.setwd(datadir, 'com_sel_25_jan_2013');
+#pr.setwd(datadir, 'com_choice_good');
+#pr.setwd(datadir, 'com_rand_1_feb_2013');
+
 
 # x player
 subPlayers <- read.table(file="./sub/sub_x_round_x_player.csv", head=TRUE, sep=",")
@@ -22,28 +24,35 @@ dev.off()
 #subPlayers.int.jitter = apply(subPlayers.int, 2, jitter, amount=0.05)
 #plot.ts(subPlayers.int.jitter, type='p', plot.type="single")
 
+# APPLY DOES NOT WORK IF ONE LEVEL IS EMPTY (A,B, or C = 0)
+#playerSubs <- apply(subPlayers, 2, table)
 
-playerSubs <- apply(subPlayers, 2, table)
+playerSubs <- matrix(nrow=3,
+                     ncol=9,
+                     dimnames = list(c("A","B","C"),
+                       names(subPlayers)))
+
+for (p in names(subPlayers)) {
+  playerSubs[,p] <- table(subPlayers[[p]]) 
+}
 
 # Hack if some dimension is not full
-playerSubs$P_09 <- table(subPlayers$P_09)
+#playerSubs$P_09 <- table(subPlayers$P_09)
 
 playerSubs
 
 #oldpar = par(mar=c(5,4,4,8), xpd=T)
 #par(oldpar)
 
-jpeg('sub/img/player_subs_all.jpg',quality=100,width=600)
-
-barplot(playerSubs,
+#jpeg('sub/img/player_subs_all.jpg',quality=100,width=600)
+barplot(as.matrix(playerSubs),
         col = brewer.pal(3,"Set1"),
         border="white",
         ylim=c(0,35),
         main='Players submissions by exhibition',
         legend.text = c('A','B','C'),
         args.legend = list(bty="n", horiz=TRUE, x="top"))
-
-dev.off()
+#dev.off()
 
 winlose <- read.table(file="win_lose/win_lose_all.csv", head=TRUE, sep=",")
 head(winlose)

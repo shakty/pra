@@ -3,8 +3,11 @@ rm(list=ls())
 
 library(ggplot2)
 
+homedir <- '/home/stefano/pra/'; homedir
 
-scriptdir <- getwd(); scriptdir
+datadir <- paste0(homedir, 'data/'); datadir
+
+scriptdir <- paste0(homedir,'R'); scriptdir
 
 pr.setwd <- function(DIR, session){
   DATADIR = sprintf("%s%s/csv/", DIR, session)
@@ -16,43 +19,6 @@ pr.source <- function(sourcefile) {
  FULLSOURCE = sprintf("%s/%s", scriptdir, sourcefile)
  source(FULLSOURCE)
 }
-
-datadir <- '/home/stefano/pra/data/'
-
-#session <- 'com_sel'
-#session <- 'coo_rnd_orig'
-session <- 'com_rnd_fake'
-session <- 'coo_sel_err'
-
-# 25 Jan 2013
-session <- 'com_rand_25_jan_2013'
-session <- 'com_choice_25_jan_2013'
-
-# 30 Jan 2013
-session <- 'coo_rand_30_jan_2013'
-session <- 'coo_choice_30_jan_2013'
-
-# 31 Jan 2013
-session <- 'com_choice_31_jan_2013'
-session <- 'coo_rand_31_jan_2013'
-
-# 1 Feb 2013
-session <- 'com_rand_1_feb_2013'
-session <- 'coo_choice_1_feb_2013'
-
-sessions.com <- c('com_sel',
-                  'com_rnd_fake',
-                  'com_rand_25_jan_2013',
-                  'com_choice_25_jan_2013',
-                  'com_choice_31_jan_2013',
-                  'com_rand_1_feb_2013')
-
-sessions.coo <- c('coo_rnd_orig',
-                  'coo_sel_err',
-                  'coo_rand_30_jan_2013',
-                  'coo_choice_30_jan_2013',
-                  'coo_rand_31_jan_2013',
-                  'coo_choice_1_feb_2013')
 
 sessions <- c(
               # PRETEST
@@ -75,6 +41,8 @@ sessions <- c(
               )
 
 
+#session <- sessions[length(sessions)]
+
 treatments <- c('coo', 'com', 'choice', 'rand')
 
 
@@ -93,15 +61,6 @@ for (s in sessions) {
   }
 }
 
-
-  
-
-
-# combined sessions
-#session <- 'coo'
-#session <- 'com'
-
-pr.setwd(datadir, session)
 
 
 library("RColorBrewer")
@@ -168,7 +127,16 @@ plotDiffFeaturesDir <- function(dir) {
   }
 }
 
-plotEvaSameVsOtherEx <- function(ing, outg, name) {
+plotEvaSameVsOtherEx <- function(ing, outg, name, ...) {
+  input.list <- list(...)
+
+  title <- "Review scores for paintings in same exhibition vs other exhibition"
+  
+  if (!is.null(input.list$title)) {
+    title <- paste(title, input.list$title, sep=" ")
+  }
+
+  
    outfile <- sprintf("ingroup/img/%s.jpg", name)
    jpeg(outfile, quality=100, width=600)
    old = par(oma = c(3,0,0,0))
@@ -178,7 +146,7 @@ plotEvaSameVsOtherEx <- function(ing, outg, name) {
      ylim=c(0,0.2),
      lty=1,
      col="2",
-     main="Review scores for paintings in same exhibition vs other exhibition")
+     main=title)
    lines(density(outg$score),
       xlim=c(0,10),
       lty=2)
@@ -194,14 +162,22 @@ plotEvaSameVsOtherEx <- function(ing, outg, name) {
    dev.off()
 }
 
-boxplotEvaSameVsOtherEx <- function(ing, outg, name) {
-     outfile <- sprintf("ingroup/img/%s.jpg", name)
-     jpeg(outfile, quality=100, width=600)
-     boxplot(ing$score, outg$score,
-        main="Review scores for paintings in same exhibition vs other exhibition")
-     grid(col="gray", nx=NA, ny=NULL)
-     axis(1, at=1:2, labels=c("Same", "Other"))
-     dev.off()
+boxplotEvaSameVsOtherEx <- function(ing, outg, name, ...) {
+  input.list <- list(...)
+
+  title <- "Review scores for paintings in same exhibition vs other exhibition"
+  
+  if (!is.null(input.list$title)) {
+    title <- paste(title, input.list$title, sep=" ")
+  }
+  
+  outfile <- sprintf("ingroup/img/%s.jpg", name)
+  jpeg(outfile, quality=100, width=600)
+  boxplot(ing$score, outg$score,
+          main=title)
+  grid(col="gray", nx=NA, ny=NULL)
+  axis(1, at=1:2, labels=c("Same", "Other"))
+  dev.off()
 }
 
 

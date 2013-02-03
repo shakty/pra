@@ -25,13 +25,11 @@ stats.outex = summary(ingroup.otherex$score); stats.outex
 
 plotEvaSameVsOtherEx(ingroup.sameex, ingroup.otherex,"same_other_ex")
 
-plotEvaSameVsOtherEx(ingroup.sameex.changed, ingroup.otherex.changed, "same_other_ex_changed")
+plotEvaSameVsOtherEx(ingroup.sameex.changed, ingroup.otherex.changed, "same_other_ex_changed", title="(slider moved)")
                      
 boxplotEvaSameVsOtherEx(ingroup.sameex, ingroup.otherex, "same_other_ex_boxplot")
 
-boxplotEvaSameVsOtherEx(ingroup.sameex.changed, ingroup.otherex.changed, "same_other_ex_boxplot_changed")
-
-
+boxplotEvaSameVsOtherEx(ingroup.sameex.changed, ingroup.otherex.changed, "same_other_ex_boxplot_changed", title="(slider moved)")
 
 
 # are mean different?
@@ -67,7 +65,7 @@ dev.off()
 
 jpeg('./ingroup/img/reviews_in_out_boxplot.jpg', quality=100, width=600)
 old = par(oma = c(3,0,0,0))
-boxplot(cbind(ingroup=ingroup.sameex$score, outgroup=ingroup.otherex$score),
+boxplot(list(ingroup=ingroup.sameex$score, outgroup=ingroup.otherex$score),
         main="Distribution of review scores for ingroup and outgroup (color)",
         ylab="Score")
 txt = sprintf('In-mean = %f, Out-mean = %f, t(%i) = %f, p < .05', meanIn, meanOut, (n-1), test)
