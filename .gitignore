@@ -1,8 +1,10 @@
 .project
 .settings
-data
 *.csv
 *.nddb
+
+data
+results
 
 node_modules
 

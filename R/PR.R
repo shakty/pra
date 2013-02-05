@@ -13,6 +13,12 @@ session <- 'coo_rand_30_jan_2013'
 session <- 'com_rand_25_jan_2013'
 session <- 'com_choice_25_jan_2013'
 
+session <- 'coo_rand_4_feb_2013'
+session <- 'com_rand_4_feb_2013'
+
+session <- 'com_aggregate'
+session <- 'coo_aggregate'
+
 pr.setwd(datadir, session);
 
 ## Publications

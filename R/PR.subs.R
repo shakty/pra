@@ -44,7 +44,7 @@ playerSubs
 #oldpar = par(mar=c(5,4,4,8), xpd=T)
 #par(oldpar)
 
-#jpeg('sub/img/player_subs_all.jpg',quality=100,width=600)
+jpeg('sub/img/player_subs_all.jpg',quality=100,width=600)
 barplot(as.matrix(playerSubs),
         col = brewer.pal(3,"Set1"),
         border="white",
@@ -52,7 +52,7 @@ barplot(as.matrix(playerSubs),
         main='Players submissions by exhibition',
         legend.text = c('A','B','C'),
         args.legend = list(bty="n", horiz=TRUE, x="top"))
-#dev.off()
+dev.off()
 
 winlose <- read.table(file="win_lose/win_lose_all.csv", head=TRUE, sep=",")
 head(winlose)

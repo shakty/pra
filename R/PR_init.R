@@ -37,7 +37,10 @@ sessions <- c(
               'coo_rand_31_jan_2013',
               # 1 FEB 2013
               'com_rand_1_feb_2013',
-              'coo_choice_1_feb_2013'
+              'coo_choice_1_feb_2013',
+              # 4 FEB 2013
+              'com_rand_4_feb_2013',
+              'coo_rand_4_feb_2013'
               )
 
 
@@ -211,7 +214,6 @@ read.tables.H <- function(files, ...) {
 
   return(df.h)
 }
-
 
 createFileList <- function(file, DIR, sessions) {
   files <- list()

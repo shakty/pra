@@ -5,12 +5,23 @@ pr.setwd(datadir, 'com_aggregate')
 #pr.setwd(datadir, 'coo_aggregate')
 
 # player with the previous submission      
-diffFacesPlayers <- read.csv(file="./diff/global/diff_faces_x_round_x_player_self.csv", head=TRUE, sep=",")
-#summary(diffFacesPlayers)
+diffFacesPlayers <- read.csv(file="./diff/global/consensus.csv", head=TRUE, sep=",")
+diffFacesPlayers = diffFacesPlayers[-1] # for aggregated data
+
+diffFacesPlayers$round <- factor(diffFacesPlayers$round, levels=seq(1:30))
+diffFacesPlayers$session <- as.factor(diffFacesPlayers$session)
+diffFacesPlayers$file <- as.factor(diffFacesPlayers$file)
+
+summary(diffFacesPlayers)
+
 
 
 jpeg('diff/global/img/diff_faces_x_round_x_player_self.jpg', quality=100, width=600)      
+
+
 boxplot(diffFacesPlayers, main="Distributions of difference between two subsequent submissions")
+
+
 dev.off()
 
 # mean x round
