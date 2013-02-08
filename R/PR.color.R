@@ -1,6 +1,8 @@
 # InGroup
 #########
 
+#pr.setwd(datadir, 'com_aggregate')
+
 ingroup <- read.csv(file="./ingroup/all_reviews.csv", head=TRUE, sep=",")
 head(ingroup)
 
@@ -10,11 +12,11 @@ head(ingroup)
 # mean eva for different colors
 
 ingroup.same <- ingroup[ingroup$same == 1,]
-ingroup.same
+head(ingroup.same)
 
 
 ingroup.other <- ingroup[ingroup$same != 1,]
-ingroup.other
+head(ingroup.other)
 
 
 stats.in = summary(ingroup.same$score)
@@ -92,3 +94,4 @@ plot(zoo(ingroup.scores),
      main="Evolution of individual review scores in time",
      xlab='Rounds')     
 dev.off()
+

@@ -16,8 +16,18 @@ session <- 'com_choice_25_jan_2013'
 session <- 'coo_rand_4_feb_2013'
 session <- 'com_rand_4_feb_2013'
 
-session <- 'com_aggregate'
-session <- 'coo_aggregate'
+session <- 'coo_choice_6_feb_2013'
+session <- 'com_choice_6_feb_2013'
+
+session <- 'com_rand_7_feb_2013'
+session <- 'coo_rand_7_feb_2013'
+
+session <- 'com_choice_8_feb_2013'
+session <- 'coo_choice_8_feb_2013'
+
+
+#session <- 'com_aggregate'
+#session <- 'coo_aggregate'
 
 pr.setwd(datadir, session);
 

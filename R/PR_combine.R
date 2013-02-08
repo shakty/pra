@@ -57,6 +57,15 @@ mergeSessions <- function(sessions, outdir) {
   #return(sessiondir.files)
 }
 
+# COLOR: all reviews
+
+mergeDatasets('ingroup/all_reviews.csv',
+              datadir, session.com, 'com_aggregate', 'ingroup/all_reviews.csv')
+
+mergeDatasets('ingroup/all_reviews.csv',
+              datadir, session.coo, 'coo_aggregate', 'ingroup/all_reviews.csv')
+
+
 mergeDatasets('diff/global/diff_faces_x_round_x_player_mean.csv',
               datadir, session.com, 'com_aggregate', 'diff/global/consensus.csv')
 

@@ -72,7 +72,7 @@ plot(density(wl$diffSelf),
      ylim=c(0,10),
      "Distribution of innovation from previous submission",
      xlab="Face distance between two subsequent submissions of the same player",
-     ylab="Frequency")
+     ylab="Density")
 lines((density(pubBefore.clean$diffSelf)),
       col="2")
 lines((density(notPubBefore.clean$diffSelf)),
@@ -89,7 +89,8 @@ legend("top",
 plot(density(wl$diffPubs),
      col="1",
      ylim=c(0,12),
-     main="Distribution of innovation from drawings published in the previous round")
+     main="Distribution of innovation from drawings published in the previous round",
+     xlab="Face distance", ylab="Density")
 lines((density(pubBefore.clean$diffPubs)),
       col="2")
 lines((density(notPubBefore.clean$diffPubs)),
@@ -122,28 +123,23 @@ legend("top",
 
 boxplot(pubBefore.clean$diffSelf, notPubBefore.clean$diffSelf)
 
+boxplot(pubBefore.clean$diffPubs, notPubBefore.clean$diffPubs)
+
+boxplot(pubBefore.clean$diffPubsCum, notPubBefore.clean$diffPubsCum)
+
+
 summary(pubBefore.clean$diffPubs)
 summary(notPubBefore.clean$diffPubs)
 
 
 t.test(pubBefore.clean$diffPubs, notPubBefore.clean$diffPubs)
-
 summary(t)
-
 mean(pubBefore.clean$diffPubs)
-
 mean(notPubBefore.clean$diffPubs)
-
-
 
 
 h <- hist(wl$diffOthers)
 
-
-     
-table(wl$published.lag, w)
-
-summary(s)
 
 #plot(winlose$diffOthers, winlose$published)
 
@@ -151,12 +147,18 @@ wl2 <- as.data.frame(wl)
 
 fit <- glm(stay ~ published.lag, data=wl2, family="binomial")
 
-fit <- lm(stay ~ published.lag, data=wl2)
-
 summary(fit)
 
-winlose.clean <-  na.omit(winlose)
-head(winlose.clean, n=10)
+
+# getting the probabilities from the odds
+
+testdata <- data.frame(published.lag=c(0,1), stay=c(0,1))
+
+predict(fit, newdata=testdata, type="response")
+
+
+
+                       
 
 fit <- lm(formula = diffSelf ~ published.lag + , data = wl2)
 

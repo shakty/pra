@@ -1,8 +1,9 @@
 #######################
 # Diff Self
 
-pr.setwd(datadir, 'com_aggregate')
+#pr.setwd(datadir, 'com_aggregate')
 #pr.setwd(datadir, 'coo_aggregate')
+#pr.setwd(datadir, 'com_rand_25_jan_2013')
 
 # player with the previous submission      
 diffFacesPlayers <- read.csv(file="./diff/global/diff_faces_x_round_x_player_self.csv", head=TRUE, sep=",")
@@ -14,8 +15,8 @@ boxplot(diffFacesPlayers, main="Distributions of difference between two subseque
 dev.off()
 
 # mean x round
-diffFacesPlayers.clean = diffFacesPlayers[-1] # for aggregated data
-avgRoundFaceDiffPrevious = rowMeans(diffFacesPlayers.clean, na.rm = FALSE, dims = 1)
+
+avgRoundFaceDiffPrevious = rowMeans(diffFacesPlayers, na.rm = FALSE, dims = 1)
 
 
 jpeg('diff/global/img/diff_faces_x_round_x_player_self_detail.jpg', quality=100, width=600)  
@@ -38,8 +39,7 @@ summary(avgDiffFacesPlayers)
 #boxplot(avgDiffFacesPlayers)
 
 # mean x round
-avgdiffFacesPlayers.clean = avgDiffFacesPlayers[-1] # for aggregated data
-avgRoundFaceDiff = rowMeans(avgdiffFacesPlayers.clean, na.rm = FALSE, dims = 1)
+avgRoundFaceDiff = rowMeans(avgDiffFacesPlayers, na.rm = FALSE, dims = 1)
 
 jpeg('diff/global/img/diff_faces_x_round_x_player_mean_detail.jpg', quality=100, width=600)
 plot.ts(avgRoundFaceDiff, type='o', main="Average face difference per round", ylab="Normalized (0-1) face difference")

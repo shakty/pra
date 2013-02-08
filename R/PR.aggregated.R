@@ -14,7 +14,7 @@ diffFacesPlayers$file <- as.factor(diffFacesPlayers$file)
 
 summary(diffFacesPlayers)
 
-
+qplot(P_02, round, data=diffFacesPlayers, facets = . ~ session) + geom_smooth(aes(group=1))
 
 jpeg('diff/global/img/diff_faces_x_round_x_player_self.jpg', quality=100, width=600)      
 

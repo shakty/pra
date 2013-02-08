@@ -22,10 +22,11 @@ pr.source <- function(sourcefile) {
 
 sessions <- c(
               # PRETEST
-              'coo_rand_orig',
-              'coo_choice_err',
-              'com_choice_good',
-              'com_rand_fake',
+              #'coo_rand_orig',
+              #'com_choice_good',
+              #not using those
+              #'coo_choice_err',
+              #'com_rand_fake',
               # 25 JAN 2013
               'com_rand_25_jan_2013',
               'com_choice_25_jan_2013',
@@ -40,7 +41,10 @@ sessions <- c(
               'coo_choice_1_feb_2013',
               # 4 FEB 2013
               'com_rand_4_feb_2013',
-              'coo_rand_4_feb_2013'
+              'coo_rand_4_feb_2013',
+              # 6 FEB 2013
+              'coo_choice_6_feb_2013',
+              'com_choice_6_feb_2013'
               )
 
 
@@ -87,7 +91,7 @@ plotDiffFeatures <- function(dir, file) {
   diffs <- read.csv(file=fileName, head=TRUE, sep=",")
 
   # remove first column (for aggregated results)
-  diffs = diffs[-1]
+  # diffs = diffs[-1]
   
   summary(diffs)
   # Boxplot
