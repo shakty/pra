@@ -44,7 +44,13 @@ sessions <- c(
               'coo_rand_4_feb_2013',
               # 6 FEB 2013
               'coo_choice_6_feb_2013',
-              'com_choice_6_feb_2013'
+              'com_choice_6_feb_2013',
+              # 7 FEB 2013
+              'com_rand_7_feb_2013',
+              'coo_rand_7_feb_2013',
+              # 8 FEB 2013
+              'coo_choice_8_feb_2013',
+              'com_choice_8_feb_2013',
               )
 
 
