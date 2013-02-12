@@ -253,10 +253,14 @@ var headings = [
                 // time for
                 'time.creation',
                 'time.review',
-                'time.dissemination'
+                'time.dissemination',
                 
                 // distance 
-                // ...
+                'd.pub.previous',
+                'd.pub.cumulative',
+                'd.sub.current',
+                'd.self.previous',
+                
                 
 ];
 
@@ -264,17 +268,30 @@ var headings = [
 // START
 
 var prefix = './data/';
-var fileout = './data/pr_new.csv';
+var fileout = './data/ALL/pr_new2.csv';
+
+var sessionData, PL, db, db_all, db_reviews, path; // shared by more functions
+
 var writer = csv.createCsvStreamWriter(fs.createWriteStream(fileout));
 writer.writeRecord(headings);	
 
-var sessionData, PL, db, db_all, db_reviews, path;
-for (var session in sessions) {
+var session = 'coo_rand_31_jan_2013';
+merge(session);
+return;
 
+
+for (var session in sessions) {
+	merge(session);
+}
+
+/////////////////////////////////////////////////////////////////
+// FUNCTIONS
+
+function merge(session) {
 	path = prefix + session + '/';
 	
 	PL = pra.pl(path);
-	db = pra.db(path, 'all_cf_sub_eva_copy.nddb');
+	db = pra.db(path, 'pr_full.nddb');
 	db_all = pra.db(path, 'pr_4.3.30.nddb');
 
 	db_reviews = new NDDB();
@@ -293,10 +310,17 @@ for (var session in sessions) {
 	});
 }
 
+///////////////////////////////////////////////////////////////////
 
-//console.log(db_reviews.player);
-
-//console.log(retrieveEvas('960748814137269343', 6));
+function getDistances(e) {
+	if (!e.diff) return J.rep(['NA'], 4);
+	var self = e.diff.self || 'NA';
+	var pub = e.diff.pubs || 'NA';
+	var pubCum = e.diff.pubsCum || 'NA';
+	var sub = e.diff.others || 'NA';
+	
+	return [pub, pubCum, sub, self];
+}
 
 function getTimeFromFS(DIR, round) {
     var myStat = fs.statSync(DIR + '/' + 'pr_4.3.' + round + '.nddb');
@@ -560,14 +584,28 @@ function retrieveEvas(player, round) {
 function buildRoundRow(e, session) {
 	var player = getPlayerData(e);
 	var round = getRound(e);
-	var cf = getCFValues(e);
-	var cf_norm = getNormalizedCFValues(e);
-	var published = getPublished(e);
-	var ex_and_pub = [e.ex, published];
-	var reviews = getReviews(e);
-	var evas = getEvaluations(e);
-	var copy = getCopyData(e);
-	var time = getRelativeRoundTime(e, session);
+	
+	if (e.state.round > 26 && session === 'coo_rand_7_feb_2013') {
+		var cf = J.rep(['NA'], 13);
+		var cf_norm = J.rep(['NA'], 13);
+		var ex_and_pub = ['NA', 'NA'];
+		var reviews = J.rep(['NA'], 23);
+		var evas = J.rep(['NA'], 21);
+		var copy = J.rep(['NA'], 6);
+		var time = J.rep(['NA'], 3);
+	} else {
+		var cf = getCFValues(e);
+		var cf_norm = getNormalizedCFValues(e);
+		var published = getPublished(e);
+		var ex_and_pub = [e.ex, published];
+		var reviews = getReviews(e);
+		var evas = getEvaluations(e);
+		var copy = getCopyData(e);
+		var time = getRelativeRoundTime(e, session);
+	}
+	
+	var distances = getDistances(e);
+	
 	//console.log(time)
 	
 	var row = player.concat([round])
@@ -577,7 +615,8 @@ function buildRoundRow(e, session) {
 					.concat(reviews)
 					.concat(evas)
 					.concat(copy)
-					.concat(time);
+					.concat(time)
+					.concat(distances);
 	
 	return row;
 }

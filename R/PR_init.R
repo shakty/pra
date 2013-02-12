@@ -50,7 +50,7 @@ sessions <- c(
               'coo_rand_7_feb_2013',
               # 8 FEB 2013
               'coo_choice_8_feb_2013',
-              'com_choice_8_feb_2013',
+              'com_choice_8_feb_2013'
               )
 
 
