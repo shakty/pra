@@ -4,13 +4,12 @@ library(ggplot2)
 
 setwd("/var/www/pra/data/ALL/")
 
-pr <- read.table(file="./pr_new2.csv", head=TRUE, sep=",")
+pr <- read.table(file="./all.csv", head=TRUE, sep=",")
 
 #summary(pr)
 #names(pr)
 
 qplot(r1, round, data=pr)
-
 
 filterVars <- function(pattern, varlist) {
 
@@ -24,6 +23,9 @@ filterVars <- function(pattern, varlist) {
 
   return(selected)
 }
+
+
+#meanRounds <- column
 
 
 myplclust <- function( hclust, lab=hclust$labels, lab.col=rep(1,length(hclust$labels)), hang=0.1,...
@@ -59,8 +61,8 @@ srt=90, adj=c(1,0.5), xpd=NA, ... )
 face <- pr[,13:25]
 face.norm <- pr[,26:38]
 
-face <- pr[pr$round == 1, 13:25]
-face.norm <- pr[pr$round == 1, 26:38]
+face <- pr[pr$round == 4, 13:25]
+face.norm <- pr[pr$round == 4, 26:38]
 
 face.matrix <- as.matrix(face)
 face.norm.matrix <- as.matrix(face.norm)
@@ -68,11 +70,24 @@ face.norm.matrix <- as.matrix(face.norm)
 face.dist <- dist(face)
 face.norm.dist <- dist(face.norm)
 
-face.hclust <- hclust(face.dist)
-face.norm.hclust <- hclust(face.norm.dist)
+face.hclust <- hclust(face.dist, method="average")
+face.norm.hclust <- hclust(face.norm.dist,labels=seq(2:10)+1 )
 
 plot(face.hclust,labels=seq(2:10)+1)
 
 plot(face.norm.hclust,labels=seq(2:10)+1)
 
 heatmap(face.matrix)
+
+face.groups<-cutree(face.hclust, h=30)
+
+
+# EXAMPLE
+USArrests.dist<-dist(USArrests)
+hc <- hclust(USArrests.dist, "average")
+plot(hc, hang = -1)
+abline(h=50, col="red", lty="dashed")
+groups<-cutree(hc, h=50)
+USArrests2<-cbind(USArrests, Group=groups)
+head(USArrests2)
+#
