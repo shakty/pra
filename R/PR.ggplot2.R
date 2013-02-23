@@ -1,205 +1,5 @@
-
-
-all.rounds.d.pub.previous <- tapply(pr.clean$d.pub.previous, pr.clean$round, mean)
-plot.ts(seq(2:30), all.rounds.d.pub.previous)
-
-all.rounds.d.sub.current <- tapply(pr.clean$d.sub.current, pr.clean$round, mean)
-plot.ts(seq(2:30), all.rounds.d.sub.current)
-
-all.rounds.d.self.previous <- tapply(pr.clean$d.self.previous, pr.clean$round, mean)
-plot.ts(seq(2:30), all.rounds.d.self.previous)
-
-all.rounds.d.pub.cumulative <- tapply(pr.clean$d.pub.cumulative, pr.clean$round, mean)
-plot.ts(seq(2:30), all.rounds.d.pub.cumulative)
-
-pr.com.clean <- na.omit(pr[pr$com == 1, ])
-
-com.rounds.d.pub.previous <- tapply(pr.com.clean$d.pub.previous, pr.com.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.pub.previous)
-
-com.rounds.d.sub.current <- tapply(pr.com.clean$d.sub.current, pr.com.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.sub.current)
-
-com.rounds.d.self.previous <- tapply(pr.com.clean$d.self.previous, pr.com.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.self.previous)
-
-com.rounds.d.pub.cumulative <- tapply(pr.com.clean$d.pub.cumulative, pr.com.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.pub.cumulative)
-
-
-pr.coo.clean <- na.omit(pr[pr$coo == 1, ])
-
-com.rounds.d.pub.previous <- tapply(pr.coo.clean$d.pub.previous, pr.coo.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.pub.previous)
-
-com.rounds.d.sub.current <- tapply(pr.coo.clean$d.sub.current, pr.coo.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.sub.current)
-
-com.rounds.d.self.previous <- tapply(pr.coo.clean$d.self.previous, pr.coo.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.self.previous)
-
-com.rounds.d.pub.cumulative <- tapply(pr.coo.clean$d.pub.cumulative, pr.coo.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.pub.cumulative)
-
-
-pr.choice.clean <- na.omit(pr[pr$choice == 1, ])
-
-com.rounds.d.pub.previous <- tapply(pr.choice.clean$d.pub.previous, pr.choice.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.pub.previous)
-
-com.rounds.d.sub.current <- tapply(pr.choice.clean$d.sub.current, pr.choice.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.sub.current)
-
-com.rounds.d.self.previous <- tapply(pr.choice.clean$d.self.previous, pr.choice.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.self.previous)
-
-com.rounds.d.pub.cumulative <- tapply(pr.choice.clean$d.pub.cumulative, pr.choice.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.pub.cumulative)
-
-
-pr.rand.clean <- na.omit(pr[pr$rand == 1, ])
-
-com.rounds.d.pub.previous <- tapply(pr.rand.clean$d.pub.previous, pr.rand.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.pub.previous)
-
-com.rounds.d.sub.current <- tapply(pr.rand.clean$d.sub.current, pr.rand.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.sub.current)
-
-com.rounds.d.self.previous <- tapply(pr.rand.clean$d.self.previous, pr.rand.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.self.previous)
-
-com.rounds.d.pub.cumulative <- tapply(pr.rand.clean$d.pub.cumulative, pr.rand.clean$round, mean)
-plot.ts(seq(2:30), com.rounds.d.pub.cumulative)
-
-
-
-
-
-
-
-myplclust <- function( hclust, lab=hclust$labels, lab.col=rep(1,length(hclust$labels)), hang=0.1,...
-## modifiction of plclust for plotting hclust objects *in colour*!
-## Copyright Eva KF Chan 2009
-## Arguments:
 ##
-## hclust:
-## hclust object
-##
-## lab:
-## a character vector of labels of the leaves of the tree
-##
-## lab.col:
-## colour for the labels; NA=default device foreground colour
-##
-## hang:
-## as in hclust & plclust
-## Side effect:
-##
-A display of hierarchical cluster with coloured leaf labels.
-y <- rep(hclust$height,2); x <- as.numeric(hclust$merge)
-y <- y[which(x<0)]; x <- x[which(x<0)]; x <- abs(x)
-y <- y[order(x)]; x <- x[order(x)]
-plot( hclust, labels=FALSE, hang=hang, ... )
-text( x=x, y=y[hclust$order]-(max(hclust$height)*hang),
-labels=lab[hclust$order], col=lab.col[hclust$order],
-srt=90, adj=c(1,0.5), xpd=NA, ... )
-}
-
-
-countGroupsInSession <- function(session, cutoff) {
-  
-  session.groups <- matrix(nrow=30, ncol=9, dimnames=list(rnames, pnames))
-  session.max <- matrix(nrow=30, ncol=1, dimnames=list(rnames, "max"))
-  session.metadata <- data.frame()
-  for (round in seq(1:30)) {
-    # perform Hierchical clustering and cut the tree at "cutoff"
-    round.groups <- countGroups(session, round, cutoff)
-    round.ngroups <- max(round.groups)   
-    session.groups[round,] <- round.groups
-    session.max[round,] <- round.ngroups
-    session.metadata <- rbind(session.metadata, session[1,sessions.ids])
-  }
-  session.frame <- data.frame(session.metadata, round=c(1:30), session.groups, session.max)
-  return(session.frame)
-}
-
-countGroups <- function(session, round, cutoff) {
-  faces <- session[session$round == round,13:25]
-  
-  if (any(is.na(faces))) {
-    return(rep(NA,9))
-  }
-  #faces.norm <- session[session$round == round, 26:38]
-  
-  faces.matrix <- as.matrix(faces)
-  #faces.norm.matrix <- as.matrix(faces.norm)
-
-  faces.dist <- dist(faces)
-  #faces.norm.dist <- dist(faces.norm)
-
-  faces.hclust <- hclust(faces.dist)
-  #faces.norm.hclust <- hclust(faces.norm.dist)
-
-  #plot(faces.hclust,labels=seq(2:10)+1)
-  #plot(faces.norm.hclust,labels=seq(2:10)+1)
-
-  #heatmap(faces.matrix)
-
-  faces.groups<-cutree(faces.hclust, h=cutoff)
-
-  return(faces.groups)
-}
-
-
-
-#### START ####
-#mysession <- pr[pr$session == 3, ]
-#source('PR_init.R')
-library(plyr)
-library(ggplot2)
-library(reshape)
-library(MASS)
-
-setwd("/var/www/pra/data/ALL/")
-
-pr <- read.table(file="./all.csv", head=TRUE, sep=",")
-
-pr$com <- as.factor(pr$com)
-pr$coo <- as.factor(pr$coo)
-pr$rand <- as.factor(pr$rand)
-pr$choice <- as.factor(pr$choice)
-pr$session <- as.factor(pr$session)
-pr$date <- as.factor(pr$date)
-pr$morning <- as.factor(pr$morning)
-pr$afternoon <- as.factor(pr$afternoon)
-
-pr$e1.same.color <- as.factor(pr$e1.same.color)
-pr$e2.same.color <- as.factor(pr$e2.same.color)
-pr$e3.same.color <- as.factor(pr$e3.same.color)
-
-pr$e1.same.ex <- as.factor(pr$e1.same.ex)
-pr$e2.same.ex <- as.factor(pr$e2.same.ex)
-pr$e3.same.ex <- as.factor(pr$e3.same.ex)
-                              
-pr$ex <- as.factor(pr$ex)
-pr$published <- as.factor(pr$published)
-pr$copy <- as.factor(pr$copy)
-
-pr$treatment <- paste0(pr$coo, pr$rand)
-
-pr.clean <- na.omit(pr)
-
-players.labels=seq(2:10)+1
-sessions.ids <- seq(1,8)
-
-pnames <- paste0("p", seq(2:10)+1)
-rnames <- paste0("r", seq(1:30))
-
-sessions <- unique(pr$session)
-cutoff = 30
-
-names.pr <- names(pr)
-pr.melted <- melt(pr, id=names.pr[c(-64, -70, -76)])
+source("PR2.init.R")
 
 
 # CLUSTERS
@@ -408,7 +208,21 @@ p.facets <- p.facets + opts(title="Number of clusters per round per treatment co
 
 ## DISTANCE IN TIME
 
+a <- tapply(pr$d.sub.current, pr$com)
 
+plot(pr$round, pr$d.sub.current)
+fit <- lm(data = pr, d.sub.current ~ round) 
+abline(fit)
+
+
+
+p.d <- ggplot(pr, aes(round, d.sub.current)
+
+pr1 <- pr[pr$session==3,]
+fit <- lm(data = pr1, d.sub.current ~ round) 
+
+
+summary(fit)
 
 p.distance <- ggplot(pr, aes(round, d.sub.current)) + ylim(0,0.5)
 p.distance <- p.distance + aes(colour=com, group=p.id) + geom_point() + facet_grid(rand ~ com, margins = T) 
@@ -421,7 +235,6 @@ p.evas.clean.same.ex.density.facets <- p.evas.clean.density + aes(colour=com) + 
 p.evas.clean.same.ex.density.facets <- p.evas.clean.same.ex.density.facets +  ggtitle("Density curves of ratings by treatment condition - same ex")
 p.evas.clean.same.ex.density.facets
 ggsave(file="./img/evas/evas_density_same_ex_all_conditions.jpg")
-
 
 all.rounds.d.pub.previous <- tapply(pr.clean$d.pub.previous, pr.clean$round, mean)
 plot.ts(seq(2:30), all.rounds.d.pub.previous)
@@ -448,7 +261,7 @@ com.rounds.d.pub.cumulative <- tapply(groups.frame$max, groups.frame$com, lm, fo
 
 
 
-
+               
 
 
 ## OLD STUFF

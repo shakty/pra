@@ -104,9 +104,26 @@ TukeyHSD(lm1)
 
 # Multiple regression
 
-download.file("http://apps.who.int/gho/athena/data/GHO/WHOSIS_000008.csv?profile=text&filter=COUNTRY:
+download.file("http://apps.who.int/gho/athena/data/GHO/WHOSIS_000008.csv?profile=text&filter=COUNTRY:")
 hunger <- read.csv("./data/hunger.csv")
 hunger <- hunger[hunger$Sex!="Both sexes",]
 head(hunger)
 
               
+### ANOVA WEEK 5
+
+
+download.file("http://www.rossmanchance.com/iscam2/data/movies03RT.txt",destfile="./data/movies.txt")
+
+movies <- read.table("./data/movies.txt",sep="\t",header=T,quote="")
+head(movies)
+
+
+aovObject <- aov(movies$score ~ movies$rating)
+aovObject
+
+
+aovObject2 <- aov(movies$score ~ movies$rating + movies$genre)
+aovObject2
+
+summary(aovObject2)
