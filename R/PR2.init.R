@@ -43,6 +43,97 @@ countGroups <- function(session, round, cutoff) {
 }
 
 
+## Summarizes data.
+## Gives count, mean, standard deviation, standard error of the mean, and confidence interval (default 95%).
+##   data: a data frame.
+##   measurevar: the name of a column that contains the variable to be summariezed
+##   groupvars: a vector containing names of columns that contain grouping variables
+##   na.rm: a boolean that indicates whether to ignore NA's
+##   conf.interval: the percent range of the confidence interval (default is 95%)
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE, conf.interval=.95, .drop=TRUE) {
+    require(plyr)
+
+    # New version of length which can handle NA's: if na.rm==T, don't count them
+    length2 <- function (x, na.rm=FALSE) {
+        if (na.rm) sum(!is.na(x))
+        else       length(x)
+    }
+
+    # This is does the summary; it's not easy to understand...
+    datac <- ddply(data, groupvars, .drop=.drop,
+                   .fun= function(xx, col, na.rm) {
+                           c( N    = length2(xx[,col], na.rm=na.rm),
+                              mean = mean   (xx[,col], na.rm=na.rm),
+                              sd   = sd     (xx[,col], na.rm=na.rm)
+                              )
+                          },
+                    measurevar,
+                    na.rm
+             )
+
+    # Rename the "mean" column    
+    datac <- rename(datac, c("mean"=measurevar))
+
+    datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+
+    # Confidence interval multiplier for standard error
+    # Calculate t-statistic for confidence interval: 
+    # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+    ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+    datac$ci <- datac$se * ciMult
+
+    return(datac)
+}
+
+
+
+
+computeDistSession <- function(session, method="euclidian") {
+
+  session.dist <- data.frame()
+  session.metadata <- data.frame()
+  for (round in seq(1:30)) {
+    # perform Hierchical clustering and cut the tree at "cutoff"
+    round.dist <- computeDistRound(session, round, method)
+    round.all <- data.frame(session[1:9, sessions.ids], round.dist)
+    session.dist <- rbind(session.dist, round.all)
+  }
+  return(session.dist)
+}
+
+computeDistRound <- function(session, round, method="euclidian") {
+  faces <- session[session$round == round,13:25]
+  faces.norm <- session[session$round == round, 26:38]
+
+  
+  if (any(is.na(faces))) {
+     return(data.frame(round = rep(round, 9),
+                       p.number = cbind(c(1:9)+1),
+                       d.R.sub.current=rep(NA,9),
+                       d.R.norm.sub.current=rep(NA,9)))
+  }
+
+  
+  
+  faces.matrix <- as.matrix(faces)
+  faces.norm.matrix <- as.matrix(faces.norm)
+
+  faces.dist <- dist(faces, method=method)
+  faces.norm.dist <- dist(faces.norm)
+
+  faces.dist.matrix <- as.matrix(faces.dist)
+  faces.norm.dist.matrix <- as.matrix(faces.norm.dist)
+
+  faces.dist.mean <- rowMeans(faces.dist.matrix)
+  faces.norm.dist.mean <- rowMeans(faces.norm.dist.matrix)
+
+  return(data.frame(round = rep(round, 9),
+                    p.number = c(1:9)+1,
+                    d.R.sub.current = faces.dist.mean,
+                    d.R.norm.sub.current = faces.norm.dist.mean))
+}
+  
+
 
 #### START ####
 #mysession <- pr[pr$session == 3, ]
@@ -51,6 +142,7 @@ library(plyr)
 library(ggplot2)
 library(reshape)
 library(MASS)
+library(car)
 
 setwd("/var/www/pra/data/ALL/")
 
@@ -78,8 +170,6 @@ pr$published <- as.factor(pr$published)
 pr$copy <- as.factor(pr$copy)
 
 pr$treatment <- paste0(pr$coo, pr$rand)
-
-pr.ex.stay <- pr == pr$ex
 
 pr$p.id <- as.factor(pr$p.id)
 
