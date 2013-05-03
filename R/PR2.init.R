@@ -192,3 +192,9 @@ names.pr <- names(pr)
 pr.melted <- melt(pr, id=names.pr[c(-64, -70, -76)])
 
 ids.metadata <- c(1:8)
+
+overview <- data.frame()
+for (s in unique(pr$session)) {
+  tmp <- pr[pr$session == s,c(1:8,length(pr))][1,]
+  overview <- rbind(overview,tmp)
+}

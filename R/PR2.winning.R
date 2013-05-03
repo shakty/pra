@@ -20,9 +20,11 @@ pr.pubs <- pr.pubs[pr.pubs$value == 1,]
 
 meanPubs <- tapply(pr.pubs$pub, pr.pubs$condition, mean)
 
+title <- ggtitle("Total number of publications per player per session, by condition")
 p.pubs <- ggplot(pr.pubs, aes(condition, pub))
 p.pubs <- p.pubs + geom_point(colour="darkblue") + geom_jitter(colour="darkblue")
-p.pubs + stat_summary(fun.y=mean, colour="red", geom="point", size=4)
+p.pubs + stat_summary(fun.y=mean, colour="red", geom="point", size=4) + title
+ggsave(file="./img/pubs/pubs_by_condition.jpg")
 
 p.pubs <- ggplot(pr.pubs, aes(condition, pub)) + geom_boxplot()
 p.pubs
@@ -31,10 +33,12 @@ p.pubs <- ggplot(pr.pubs, aes(x=pub, group=condition, colour=condition))
 p.pubs.density <- p.pubs + geom_density(aes(fill=condition),alpha=0.3)
 p.pubs.density.title <- p.pubs.density + ggtitle("Density curves of number of publications by treatment condition")
 p.pubs.density.title
+ggsave(file="./img/pubs/pubs_by_condition_density.jpg")
 
-p.pubs.facets <- p.pubs.density + aes(colour=com)  + facet_grid(rand ~ com, margins = T);
-p.pubs.density.facets <- p.pubs.density.facets +  ggtitle("Density curves of ratings by treatment condition")
-p.pubs.density.facets
+
+#p.pubs.facets <- p.pubs.density + aes(colour=com)  + facet_grid(rand ~ com, margins = T);
+#p.pubs.density.facets <- p.pubs.density.facets +  ggtitle("Density curves of ratings by treatment condition")
+#p.pubs.density.facets
 
 p.pubs + geom_density()
 

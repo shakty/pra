@@ -33,6 +33,8 @@ logOddStay.melted <- glm(ex.stay ~ published.lag + condition, data=stay.melted, 
 
 summary(logOddStay.melted)
 
+exp(logOddStay.melted$coeff)
+
 exp(confint(logOddStay.melted))
 
 

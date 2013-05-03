@@ -1,4 +1,5 @@
 source("PR2.init.R")
+library(gvlma)
 
 ## COMPUTING DIFFERENCES WITH R
 diff.frame <- data.frame()
@@ -22,16 +23,66 @@ pr.faces <- pr.faces[pr.faces$value == 1,]
 
 ## FIT
 
+# PUB PREVIOUS
 
-fit1 <- lm(d.pub.previous ~ com, data=pr)
+fit1 <- lm(100*d.pub.previous ~ round + relevel(condition, ref="coo"), data=pr.faces)
+summary(fit1)
+
+test.t.d.pub.previous <- t.test(d.pub.previous ~ com, data=pr)
+test.t.d.pub.previous
+
+#gvmodel <- gvlma(fit1)
+#summary(gvmodel)
 
 old <- par(mfrow=c(2,2))
 plot(fit1)
 
-library(gvlma)
+confint(fit1)
+anova(fit1)
 
-gvmodel <- gvlma(fit1)
-summary(gvmodel)
+old <- par(mfrow=c(2,2))
+plot(fit1)
+
+fit.aov <- aov(100*d.pub.previous ~ round + condition, data = pr.faces)
+summary(fit.aov)
+
+fit.aov$coeff
+confint(fit.aov)
+
+
+# SUB CURRENT
+
+fit1 <- lm(100*d.sub.current ~ round + relevel(condition, ref="coo"), data=pr.faces)
+summary(fit1)
+
+test.t <- t.test(d.sub.current ~ com, data=pr)
+test.t
+
+old <- par(mfrow=c(2,2))
+plot(fit1)
+
+
+# PUB CUMULATIVE
+
+fit1 <- lm(100*d.pub.cumulative ~ round + relevel(condition, ref="coo"), data=pr.faces)
+summary(fit1)
+
+test.t <- t.test(d.pub.cumulative ~ com, data=pr)
+test.t
+
+old <- par(mfrow=c(2,2))
+plot(fit1)
+
+# SELF PREVIOUS
+
+fit1 <- lm(100*d.self.previous ~ round + relevel(condition, ref="coo"), data=pr.faces)
+summary(fit1)
+
+test.t <- t.test(d.self.previous ~ com, data=pr)
+test.t
+
+old <- par(mfrow=c(2,2))
+plot(fit1)
 
 #######################
 ## PLOTS
