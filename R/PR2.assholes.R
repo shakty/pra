@@ -7,6 +7,12 @@ pr <- read.table(file="./allnew.csv", head=TRUE, sep=",")
 pr[!is.na(pr$time.creation) & (pr$time.creation > 150 | pr$time.creation < 0), "time.creation"] <- NA
 pr[!is.na(pr$time.dissemination) & (pr$time.dissemination > 150 | pr$time.dissemination < 0), "time.dissemination"] <- NA
 
+LOVE = 9.5
+HATE = 0.5
+
+pr.ass.love.all <- pr$e.mean > LOVE
+pr.ass.kill.all <- pr$e.mean < HATE
+
 p <- ggplot(pr, aes(as.factor(ass)))
 p <- p + geom_bar(aes(colour = com))
 p
@@ -14,7 +20,7 @@ p
 # p <- p  + geom_jitter(aes(colour = com))
 
 prcopy <- pr[pr$round > 2,]
-
+prcopy <- pr
 
 a <- summaryPlayers(prcopy, "time.review", c("session", "p.id"), TRUE)
 a <- merge(a, overview)
@@ -32,13 +38,21 @@ b <- summaryPlayers(prcopy, "d.sub.current", c("session", "p.id"), TRUE)
 a <- cbind(a, b)
 b <- summaryPlayers(prcopy, "d.self.previous", c("session", "p.id"), TRUE)
 a <- cbind(a, b)
+b <- summaryPlayers(prcopy, "ass", c("session", "p.id"), TRUE)
+a <- cbind(a, b)
+b <- summaryPlayers(prcopy, "ass.kill", c("session", "p.id"), TRUE)
+a <- cbind(a, b)
+b <- summaryPlayers(prcopy, "ass.love", c("session", "p.id"), TRUE)
+a <- cbind(a, b)
+b <- summaryPlayers(prcopy, "ass.kill.all", c("session", "p.id"), TRUE)
+a <- cbind(a, b)
+b <- summaryPlayers(prcopy, "ass.love.all", c("session", "p.id"), TRUE)
+a <- cbind(a, b)
 
-names(pr.pubs)[2:3] <- c("not.pub","pub")
 
 sumPubs <- function(xx, col) {
   c(npubs = sum(as.numeric(xx[,col])-1, na.rm=TRUE))
 }
-
 a$npubs = ddply(prcopy,  c("session", "p.id"), .drop = TRUE, .fun = sumPubs, "published")$npubs
 
 
@@ -51,11 +65,11 @@ aa <- a[a$round > 2,]
 
 plot(a$time.creation,a$npubs)
 
-p <- ggplot(a, aes(time.review, npubs))
-p <- p + geom_point(aes(group = 1, colour = coo, alpha=com), size=3)
+p <- ggplot(a, aes(ass.love.all, npubs))
+p <- p + geom_point(aes(group = 1, colour = coo), size=3) # + geom_jitter(aes(colour = coo), size = 3)
 p
 
-p <- ggplot(pr, aes(x=time.creation, group=com, colour=com))
+p <- ggplot(pr, aes(x=ass.love, group=com, colour=com))
 p <- p + geom_density(aes(fill=com),alpha=0.3)
 p
 
