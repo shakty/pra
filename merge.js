@@ -800,6 +800,7 @@ broken.push({
 
 var db = new NDDB();
 
+var DRYRUN = true;
 
 var prefix = './data/';
 var fileout = './data/ALL/all.csv';
@@ -870,12 +871,37 @@ var fileout = './data/ALL/all.csv';
 
 var sessionData, PL, db, db_all, db_reviews, path; // shared by more functions
 
-var writer = csv.createCsvStreamWriter(fs.createWriteStream(fileout));
-writer.writeRecord(headings);	
+
+if (!DRYRUN) {
+	var writer = csv.createCsvStreamWriter(fs.createWriteStream(fileout));
+	writer.writeRecord(headings);		
+}
+else {
+	console.log('HEADINGS');
+	var str = '';
+	J.each(headings, function(e){
+		str += e + ', '; 
+	});
+	console.log(str);
+}
 
 //var session = 'coo_rand_31_jan_2013'; // good
 //var session = 'coo_choice_6_feb_2013'; // repaired
-//var session = 'coo_choice_30_jan_2013';
+//var session = 'coo_choice_6_feb_2013';
+//
+//
+//path = prefix + session + '/';
+//
+//PL = pra.pl(path);
+//db = pra.db(path, 'pr_full.nddb');
+//db_all = pra.db(path, 'pr_4.3.30.nddb');
+//
+//var fullRow;
+//db.each(function(e) {
+//	fullRow = getRelativeRoundTime(e, session);
+//	console.log(fullRow);
+//	//console.log(e);
+//});
 //merge(session);
 //return;
 
@@ -908,7 +934,17 @@ function merge(session) {
 	var fullRow;
 	db.each(function(e) {
 		fullRow = sessionData.concat(buildRoundRow(e, session));
-		writer.writeRecord(fullRow);
+		if (!DRYRUN) {
+			writer.writeRecord(fullRow);
+		}
+		else {
+			var str = '';
+			J.each(fullRow, function(e){
+				str += e + ', '; 
+			});
+			console.log(str);
+			
+		}
 	});
 }
 
@@ -1001,6 +1037,7 @@ function getRelativeRoundTime(e, session) {
 	 
 	startTime_creation = (e.state.round !== 1) ? getTimeFromLoadedTable(session, (e.state.round-1))
 											   : 'NA';
+//	console.log(startTime_creation, 'StartCre');
 	
 	startTime_review = (db_all.state['4.1.' + e.state.round]) ? db_all.state['4.1.' + e.state.round].max('time')
 										  					  : 'NA';
@@ -1008,11 +1045,18 @@ function getRelativeRoundTime(e, session) {
 	startTime_diss = (db_all.state['4.2.' + e.state.round]) ? db_all.state['4.2.' + e.state.round].max('time')
 															: 'NA';
 	
+	
+//	console.log(startTime_diss, 'StartDiss');
+	
 	stopTime_creation = (db_all.state['4.1.' + e.state.round]) ? db_all.state['4.1.' + e.state.round].select('player', '=', e.player.id)
 																									 .select('key', '=', 'CF')
 																									 .first()
 															   : 'NA';
 	
+																									 
+	
+//    console.log(stopTime_creation.time, 'StopCre');
+
 	stopTime_creation = stopTime_creation ? stopTime_creation.time : 'NA';
 	
 
@@ -1021,11 +1065,17 @@ function getRelativeRoundTime(e, session) {
 														  										   .first()
 														  	  : 'NA';
 	
+														  										   
+														  										   
+														  										   
 	stopTime_review = stopTime_review ? stopTime_review.time : 'NA';
 	
 	stopTime_diss = getTimeFromLoadedTable(session, e.state.round);
 	
 	
+//	console.log(stopTime_diss, 'StopDiss');
+//	console.log((stopTime_diss - startTime_diss), 'DIFF')
+
 	return [
 	        (startTime_creation == 'NA' || stopTime_creation == 'NA') ? 'NA' : (stopTime_creation - startTime_creation) / 1000,
 	        (startTime_review == 'NA' || stopTime_review == 'NA') ? 'NA' : (stopTime_review - startTime_review) / 1000,
