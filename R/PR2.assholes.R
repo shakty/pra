@@ -50,6 +50,8 @@ b <- summaryPlayers(prcopy, "ass.love.all", c("session", "p.id"), TRUE)
 a <- cbind(a, b)
 
 
+
+
 sumPubs <- function(xx, col) {
   c(npubs = sum(as.numeric(xx[,col])-1, na.rm=TRUE))
 }

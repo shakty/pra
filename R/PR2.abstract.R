@@ -27,11 +27,43 @@ overview[overview$session == 3,]$abs.ste <- 3 # between 2 and 3 coo_rand_30_jan
 overview[overview$session == 6,]$abs.ste <- 1 # coo_rand_31_jan
 
 
-# Low in abstract art
-non.abs <- overview[overview$abs.ste <= 1,]
-
-for (s in non.abs$session) {
-  
+overview$assmax <- 0
+overview$assmean <- 0
+overview$asskillmax <- 0
+overview$asskillmean <- 0
+overview$asslovemean <- 0
+overview$asslovemax <- 0
+for (s in overview$session) {
+  overview[overview$session == s,"assmax"] <- max(a[a$session == s,"ass"])
+  overview[overview$session == s,"assmean"] <- mean(a[a$session == s,"ass"])
+  overview[overview$session == s,"asskillmean"] <- mean(a[a$session == s,"ass.kill"])
+  overview[overview$session == s,"asskillmax"] <- max(a[a$session == s,"ass.kill"])
+  overview[overview$session == s,"asslovemean"] <- mean(a[a$session == s,"ass.love"])
+  overview[overview$session == s,"asslovemax"] <- max(a[a$session == s,"ass.love"])
+  overview[overview$session == s,"emean"] <- mean(a[a$session == s,"e.mean"])
+  overview[overview$session == s,"npubs"] <- mean(a[a$session == s,"npubs"])
 }
 
+
+plot(overview$assmax,overview$abs.ste)
+
+plot(overview$assmean,overview$abs.ste)
+
+p <- ggplot(overview, aes(asskillmean, abs.ste))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+
+p <- ggplot(overview, aes(asslovemean, abs.ste))
+p <- p + geom_point(aes(group = 1, colour = coo, alpha = coo), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+
+p <- ggplot(overview, aes(emean, abs.ste))
+p <- p + geom_point(aes(group = 1, colour = coo), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+p <- ggplot(overview, aes(npubs, abs.ste))
+p <- p + geom_point(aes(group = 1, colour = coo), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
 
