@@ -1,5 +1,16 @@
 source("PR2.init.R")
 
+pr$d.ratio.selfprev.pubprev <- pr$d.self.previous / pr$d.pub.previous
+pr$d.ratio.selfprev.subcur <- pr$d.self.previous / pr$d.subcur
+
+title <- ggtitle("Efficiency of Personal Innovation")
+p <- ggplot(pr, aes(d.self.previous, d.pub.previous))
+p <- p + geom_jitter(aes(colour=com), alpha=.2)
+p <- p + geom_smooth(aes(colour=com),size=2, method=lm, se=FALSE)
+p <- p + title + ylab("Group Innovation") + xlab("Personal Innovation")
+p
+ggsave(file="./img/ratios/efficiency_personal_inn.jpg")
+
 ### Single players self distance
 for (s in unique(pr$session)) {
 
@@ -16,8 +27,6 @@ plot(tmp$d.self.previous, tmp$d.pub.previous)
 plot(tmp$d.self.previous, tmp$published)
 
 
-pr$d.ratio.selfprev.pubprev <- pr$d.self.previous / pr$d.pub.previous
-pr$d.ratio.selfprev.subcur <- pr$d.self.previous / pr$d.subcur
 
 p <- ggplot(pr, aes(com, d.ratio.selfprev.pubprev))
 p + geom_bar()
@@ -35,8 +44,6 @@ mm <- ddply(pr, "d.ratio.selfprev.pubprev", summarise, d.ratio.sppp = mean(d.rat
 
 b <- summaryPlayers(pr, "d.ratio.selfprev.pubprev", c("session", "p.id"), TRUE)
 
-ggplot(mm, aes(x = factor(cyl), y = mmpg)) + geom_bar(stat = "identity")
-
-  p <- ggplot(pr, aes(d.self.previous, d.sub.current))
-  p <- p + geom_bar(aes(group = 1, colour = com, alpha=published))
-  p
+p <- ggplot(pr, aes(d.self.previous, d.sub.current))
+p <- p + geom_bar(aes(group = 1, colour = com, alpha=published))
+p

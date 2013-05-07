@@ -87,6 +87,70 @@ plot(fit1)
 #######################
 ## PLOTS
 
+## global
+#########
+
+theme_set(theme_gray(base_size = 18))
+
+# PUB PREVIOUS
+title <- ggtitle("Group Diversity")
+p <- ggplot(pr, aes(round, d.pub.previous))
+p <- p + geom_smooth() 
+p <- p + title + ylab("Face Difference") + xlab("Round") # + theme(panel.background = element_blank())
+p
+ggsave(file="./img/distance/dist_global_pubprevious.jpg")
+
+# SELF PREVIOUS
+title <- ggtitle("Personal Innovation")
+p <- ggplot(pr, aes(round, d.self.previous))
+p <- p + geom_smooth() 
+p <- p + title + ylab("Face Difference") + xlab("Round") # + theme(panel.background = element_blank())
+p
+ggsave(file="./img/distance/dist_global_selfprevious.jpg")
+
+# CURRENTLY SUBMITTED
+title <- ggtitle("Group Innovation")
+p <- ggplot(pr, aes(round, d.sub.current))
+p <- p + geom_jitter(alpha=.2, shape=1)
+p <- p + geom_smooth() 
+p <- p + title + ylab("Face Difference") + xlab("Round") # + theme(panel.background = element_blank())
+p
+
+ggsave(file="./img/distance/dist_global_submitted.jpg")
+
+
+## decomposed: coo vs com
+##############
+
+
+title <- ggtitle("Group Innovation by level of competition")
+p <- ggplot(pr, aes(round, d.pub.previous))
+p <- p + geom_jitter(aes(colour=com), alpha=.2)
+p <- p + geom_smooth(aes(colour=com),size=2)
+p <- p + title + ylab("Face Difference") + xlab("Round")
+p
+ggsave(file="./img/distance/dist_coocom_groupinnovation.jpg")
+
+title <- ggtitle("Personal Innovation by level of competition")
+p <- ggplot(pr, aes(round, d.self.previous))
+p <- p + geom_jitter(aes(colour=com), alpha=.2)
+#p <- p + geom_smooth(aes(colour=com),size=2, method=lm, se=FALSE)
+p <- p + geom_smooth(aes(colour=com),size=2)
+p <- p + title + ylab("Face Difference") + xlab("Round")
+p
+ggsave(file="./img/distance/dist_coocom_personalinnovation.jpg")
+
+title <- ggtitle("Group Diversity by level of competition")
+p <- ggplot(pr, aes(round, d.sub.current))
+p <- p + geom_jitter(aes(colour=com), alpha=.2)
+p <- p + geom_smooth(aes(colour=com),size=2)
+p <- p + title + ylab("Face Difference") + xlab("Round")
+p
+ggsave(file="./img/distance/dist_coocom_groupdiversity.jpg")
+
+## decomposed
+##############
+
 # PUB PREVIOUS
 
 title <- ggtitle("Average distance from current submission and published faces \n in the previous round, per round per condition")
