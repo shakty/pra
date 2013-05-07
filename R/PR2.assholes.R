@@ -2,10 +2,7 @@ source("PR2.init.R")
 
 
 # Cleaning PR times
-pr <- read.table(file="./allnew.csv", head=TRUE, sep=",")
-
-pr[!is.na(pr$time.creation) & (pr$time.creation > 150 | pr$time.creation < 0), "time.creation"] <- NA
-pr[!is.na(pr$time.dissemination) & (pr$time.dissemination > 150 | pr$time.dissemination < 0), "time.dissemination"] <- NA
+#pr <- read.table(file="./allnew.csv", head=TRUE, sep=",")
 
 LOVE = 9.5
 HATE = 0.5
@@ -67,8 +64,27 @@ aa <- a[a$round > 2,]
 
 plot(a$time.creation,a$npubs)
 
-p <- ggplot(a, aes(ass.love.all, npubs))
-p <- p + geom_point(aes(group = 1, colour = coo), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+
+p <- ggplot(a, aes(ass, npubs))
+p <- p + geom_point(aes(group = 1, colour = session, alpha=com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+acoo <- a[a$coo ==1,]
+p <- ggplot(acoo, aes(ass.love, npubs))
+p <- p + geom_line(aes(group = 1, colour = session), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p <- p + facet_grid(session~., margins = T);
+p
+
+## ASS,KILL and npubs
+acom <- a[a$com ==1,]
+p <- ggplot(acom, aes(ass.kill, npubs))
+p <- p + geom_line(aes(group = 1, colour = session), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p <- p + facet_grid(session~., margins = T);
+p
+
+
+p <- ggplot(acoo, aes(ass.love.all, npubs))
+p <- p + geom_point(aes(group = 1, colour = session), size=3) # + geom_jitter(aes(colour = coo), size = 3)
 p
 
 p <- ggplot(pr, aes(x=ass.love, group=com, colour=com))
@@ -76,77 +92,3 @@ p <- p + geom_density(aes(fill=com),alpha=0.3)
 p
 
 
-test.t.time.creation <- t.test(time.creation ~ com, data=pr)
-test.t.time.creation
-
-test.t.time.review <- t.test(time.review ~ com, data=pr)
-test.t.time.review
-
-fit <- lm(npubs~time.creation, data=aa)
-summary(fit)
-
-fit <- glm(npubs~time.creation, data=aa, family=poisson)
-
-hist(a$time.review)
-
-
-plot(a$time.dissemination,a$npubs)
-
-
-title <- ggtitle("Average distance between current submission and the average \n of all published faces, per round per condition")
-
-p.distance <- ggplot(a, aes(round, ))
-p.distance.facets <- p.distance + aes(colour=com) + geom_smooth() + facet_grid(rand ~ com, margins = T);
-p.distance.facets <- p.distance.facets + title
-p.distance.facets
-
-title <- ggtitle("Average distance between submitted faces, per round per condition")
-
-p.distance <- ggplot(pr, aes(round, d.sub.current))
-p.distance.facets <- p.distance + aes(colour=com) + geom_smooth() + facet_grid(rand ~ com, margins = T);
-p.distance.facets <- p.distance.facets + title
-p.distance.facets
-ggsave(file="./img/distance/dist_sub_current_facets.jpg")
-
-
-
-### Single players self distance
-for (s in unique(pr$session)) {
-
-  tmp <- pr[pr$session == s,]
-  tmp$p.numberf <- as.factor(tmp$p.number)
-  p <- ggplot(tmp, aes(round, d.self.previous))
-  p <- p + geom_line(aes(group = p.numberf, colour = p.numberf))
-  p
-  
-}
-            
-plot(tmp$d.self.previous, tmp$d.pub.previous)
-
-plot(tmp$d.self.previous, tmp$published)
-
-
-pr$d.ratio.selfprev.pubprev <- pr$d.self.previous / pr$d.pub.previous
-pr$d.ratio.selfprev.subcur <- pr$d.self.previous / pr$d.subcur
-
-p <- ggplot(pr, aes(com, d.ratio.selfprev.pubprev))
-p + geom_bar()
-            
-p <- p + geom_bar(aes(filling = 1, colour = com, alpha=published))
-p
-
-
-  p <- ggplot(pr, aes(d.self.previous, d.sub.current))
-  p <- p + geom_point(aes(group = 1, colour = com, alpha=published))
-  p
-
-
-mm <- ddply(pr, "d.ratio.selfprev.pubprev", summarise, d.ratio.sppp = mean(d.ratio.selfprev.pubprev))
-
-b <- summaryPlayers(pr, "d.ratio.selfprev.pubprev", c("session", "p.id"), TRUE)
-
-ggplot(mm, aes(x = factor(cyl), y = mmpg)) + geom_bar(stat = "identity")
-
-  p <- ggplot(pr, aes(d.self.previous, d.sub.current))
-  p <- p + geom_bar(aes(group = 1, colour = com, alpha=published))
-  p

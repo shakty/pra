@@ -3,7 +3,7 @@ source("PR2.init.R")
 
 
 prcopy <- pr[pr$round > 2,]
-
+prcopy <- pr
 
 a <- summaryPlayers(prcopy, "time.review", c("session", "p.id"), TRUE)
 a <- merge(a, overview)

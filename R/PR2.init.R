@@ -133,7 +133,15 @@ computeDistRound <- function(session, round, method="euclidian") {
                     d.R.norm.sub.current = faces.norm.dist.mean))
 }
   
-
+lagg <- function(series, nlag=1, FORWARD = FALSE) {
+  obs <- length(series)
+  if (!FORWARD) {
+    return(c(rep(NA,nlag),series[1:obs-nlag]))
+  }
+  else {
+    return(c(series[nlag:obs-nlag],rep(NA,nlag)))
+  }
+}
 
 #### START ####
 #mysession <- pr[pr$session == 3, ]

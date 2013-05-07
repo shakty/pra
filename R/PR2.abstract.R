@@ -49,7 +49,7 @@ plot(overview$assmax,overview$abs.ste)
 
 plot(overview$assmean,overview$abs.ste)
 
-p <- ggplot(overview, aes(asskillmean, abs.ste))
+p <- ggplot(overview, aes(asskillmax, abs.ste))
 p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
 p
 
@@ -67,3 +67,25 @@ p <- ggplot(overview, aes(npubs, abs.ste))
 p <- p + geom_point(aes(group = 1, colour = coo), size=3) # + geom_jitter(aes(colour = coo), size = 3)
 p
 
+
+# Ass and pubs
+
+p <- ggplot(pr, aes(x = ass, fill = published))
+p <- p + geom_bar()
+p
+
+
+p <- ggplot(pr, aes(x=published, group= as.factor(ass), colour = as.factor(ass)))
+p <- p + geom_density(aes(fill=as.factor(ass)),alpha=.3, na.rm = TRUE)
+p
+
+
+
+
+p <- p + geom_bar(aes(stat=identity, colour = coo)) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+
+
+logOddPubIfAss <- glm(published ~ ass, data=pr, family="binomial")
+summary(logOddPubIfAss)

@@ -39,3 +39,12 @@ exp(confint(logOddStay.melted))
 
 
 anova(logOddStay.melted,test="Chisq")
+
+
+# 
+
+fit <- lm(e.mean ~ published.lag, data=pr)
+summary(fit)
+
+
+logOdd.melted <- glm(ex.stay ~ published.lag + condition, data=stay.melted, family="binomial")
