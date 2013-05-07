@@ -10,9 +10,23 @@ HATE = 0.5
 pr.ass.love.all <- pr$e.mean > LOVE
 pr.ass.kill.all <- pr$e.mean < HATE
 
+title <- ggtitle("Distribution of ASS levels by condition")
 p <- ggplot(pr, aes(as.factor(ass)))
-p <- p + geom_bar(aes(colour = com))
+p <- p + geom_bar(aes(colour = com, fill=com), position="dodge", na.rm=TRUE)
+p <-  p + title + ylab("Counts") + xlab("ASS levels")
 p
+
+ggsave(file="./img/ass/assbars.jpg")
+
+title <- ggtitle("Ass in rounds")
+p <- ggplot(pr, aes(round, ass))
+#p <- p + geom_jitter(aes(colour=com), alpha=.2)
+p <- p + geom_smooth(aes(colour=com),size=2)
+p <- p + title + ylab("Time in seconds") + xlab("Round")
+p
+
+ggsave(file="./img/ass/timeing_per_round.jpg")
+
 
 # p <- p  + geom_jitter(aes(colour = com))
 

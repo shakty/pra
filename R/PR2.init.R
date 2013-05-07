@@ -266,3 +266,7 @@ summaryPlayers <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE, c
 
 pr[!is.na(pr$time.creation) & (pr$time.creation > 150 | pr$time.creation < 0), "time.creation"] <- NA
 pr[!is.na(pr$time.dissemination) & (pr$time.dissemination > 150 | pr$time.dissemination < 0), "time.dissemination"] <- NA
+
+
+## FONT for plots
+theme_set(theme_gray(base_size = 18))

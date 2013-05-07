@@ -40,14 +40,30 @@ aa <- a[a$round > 2,]
 
 plot(a$time.creation,a$npubs)
 
-p <- ggplot(a, aes(time.review, npubs))
+p <- ggplot(a, aes(time.creation, npubs))
 p <- p + geom_point(aes(group = 1, colour = coo, alpha=com), size=3)
 p
 
+## Creation density curve
+
+title <- ggtitle("Density curve for the creation of new paintings")
 p <- ggplot(pr, aes(x=time.creation, group=com, colour=com))
 p <- p + geom_density(aes(fill=com),alpha=0.3)
+p <-  p + title + ylab("Density") + xlab("Time")
 p
+ggsave(file="./img/timing/timeing_per_round_density.jpg")
 
+## Creation time per round
+
+title <- ggtitle("Time to complete a new painting")
+p <- ggplot(pr, aes(round, time.creation))
+p <- p + geom_jitter(aes(colour=com), alpha=.2)
+p <- p + geom_smooth(aes(colour=com),size=2)
+p <- p + title + ylab("Time in seconds") + xlab("Round")
+p
+ggsave(file="./img/timing/timeing_per_round.jpg")
+
+## Test T
 
 test.t.time.creation <- t.test(time.creation ~ com, data=pr)
 test.t.time.creation
@@ -61,7 +77,6 @@ summary(fit)
 fit <- glm(npubs~time.creation, data=aa, family=poisson)
 
 hist(a$time.review)
-
 
 plot(a$time.dissemination,a$npubs)
 

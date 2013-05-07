@@ -90,8 +90,6 @@ plot(fit1)
 ## global
 #########
 
-theme_set(theme_gray(base_size = 18))
-
 # PUB PREVIOUS
 title <- ggtitle("Group Diversity")
 p <- ggplot(pr, aes(round, d.pub.previous))
