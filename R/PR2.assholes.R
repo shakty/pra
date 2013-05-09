@@ -111,8 +111,10 @@ a <- cbind(a, b)
 
 b <- summaryPlayers(prcopy, "d.pub.previous", c("session"), TRUE)
 overview <- merge(b, overview)
+
 b <- summaryPlayers(prcopy, "d.self.previous", c("session"), TRUE)
 overview <- merge(b, overview)
+
 b <- summaryPlayers(prcopy, "d.sub.current", c("session"), TRUE)
 overview <- merge(b, overview)
 

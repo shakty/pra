@@ -90,12 +90,65 @@ plot(fit1)
 ## global
 #########
 
+ggplot(test_data, aes(date)) + 
+  geom_line(aes(y = var0, colour = "var0")) + 
+  geom_line(aes(y = var1, colour = "var1"))
+
+test_data_long <- melt(test_data, id="date")  # convert to long format
+
+ggplot(data=test_data_long,
+       aes(x=date, y=value, colour=variable)) +
+    geom_line()
+
+
+# 
+title <- ggtitle("Diversity, Change and Innovation")
+p <- ggplot(pr, aes(round))
+p <- p + geom_smooth(aes(y = d.pub.previous, colour = "Potential Innovation"))
+p <- p + geom_smooth(aes(y = d.sub.current, colour = "Diversity"))
+p <- p + geom_smooth(aes(y = d.self.previous, colour = "Personal Change"))
+p <- p + title + ylab("Face Difference") + xlab("Round") # + theme(panel.background = element_blank())
+p
+
+title <- ggtitle("Diversity, Change and Innovation")
+p <- ggplot(pr, aes(round)) + scale_colour_discrete(name = "Variable")
+p <- p + geom_smooth(aes(y = d.pub.previous, linetype=com, colour = "Potential Innovation"))
+p <- p + geom_smooth(aes(y = d.sub.current, linetype=com, colour = "Diversity"))
+p <- p + geom_smooth(aes(y = d.self.previous, linetype=com, colour = "Personal Change"))
+p <- p + title + ylab("Face Difference") + xlab("Round") # + theme(panel.background = element_blank())
+p
+
+
+title <- ggtitle("Diversity, Change and Innovation PUBLISHED")
+p <- ggplot(pr[pr$published == 1,], aes(round)) + scale_colour_discrete(name = "Variable")
+p <- p + geom_smooth(aes(y = d.pub.previous, linetype=com, colour = "Potential Innovation"))
+p <- p + geom_smooth(aes(y = d.sub.current, linetype=com, colour = "Diversity"))
+p <- p + geom_smooth(aes(y = d.self.previous, linetype=com, colour = "Personal Change"))
+p <- p + title + ylab("Face Difference") + xlab("Round") # + theme(panel.background = element_blank())
+p
+
+title <- ggtitle("Diversity, Change and Innovation PUBLISHED")
+p <- ggplot(pr, aes(round))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_smooth(aes(y = d.pub.previous, linetype=published, colour=com), se=FALSE, size=2)
+#p <- p + geom_smooth(aes(y = d.sub.current, linetype=com, colour = "Diversity"))
+#p <- p + geom_smooth(aes(y = d.self.previous, linetype=com, colour = "Personal Change"))
+p <- p + title + ylab("Face Difference") + xlab("Round") # + theme(panel.background = element_blank())
+#p <- p + geom_smooth(aes(y = e.mean / 10, colour=com))
+p <- p + facet_wrap(~session, ncol=6)
+#p <- p + scale_y_log10()
+p
+
+
+
 # PUB PREVIOUS
-title <- ggtitle("Group Diversity")
+title <- ggtitle("Group Innovation")
 p <- ggplot(pr, aes(round, d.pub.previous))
 p <- p + geom_smooth() 
 p <- p + title + ylab("Face Difference") + xlab("Round") # + theme(panel.background = element_blank())
+#p <- p + geom_abline(intercept=OPTIMAL, slope=0)
+#p <- p + facet_wrap(~session,ncol=4)
 p
+
 ggsave(file="./img/distance/dist_global_pubprevious.jpg")
 
 # SELF PREVIOUS
@@ -107,18 +160,27 @@ p
 ggsave(file="./img/distance/dist_global_selfprevious.jpg")
 
 # CURRENTLY SUBMITTED
-title <- ggtitle("Group Innovation")
+title <- ggtitle("Group Diversity")
 p <- ggplot(pr, aes(round, d.sub.current))
-p <- p + geom_jitter(alpha=.2, shape=1)
+#p <- p + geom_jitter(alpha=.2, shape=1)
 p <- p + geom_smooth() 
 p <- p + title + ylab("Face Difference") + xlab("Round") # + theme(panel.background = element_blank())
 p
-
 ggsave(file="./img/distance/dist_global_submitted.jpg")
+
+
+
 
 
 ## decomposed: coo vs com
 ##############
+
+title <- ggtitle("Real Group Innovation by level of competition")
+p <- ggplot(pr[pr$published == 1,], aes(round, d.pub.previous))
+p <- p + geom_jitter(aes(colour=com), alpha=.2)
+p <- p + geom_smooth(aes(colour=com),size=2)
+p <- p + title + ylab("Face Difference") + xlab("Round")
+p
 
 
 title <- ggtitle("Group Innovation by level of competition")

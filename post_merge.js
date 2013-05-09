@@ -288,9 +288,8 @@ writer.writeRecord(headings);
 
 db.loadCSV(filein, function(o) { 
 	console.log('DONE');
-//	console.log(db.first());
-//	console.log(db.length);
-	
+
+	// ASSNESS
 	
 	var LOVE = 9.5;
 	var KILL = 0.5;
@@ -425,9 +424,6 @@ db.loadCSV(filein, function(o) {
 			i.ass.kill = 'NA';
 			i.ass.love = 'NA';
 		}
-
-		
-		
 		
 		writer.writeRecord(J.obj2Array(i));
 		

@@ -132,6 +132,44 @@ computeDistRound <- function(session, round, method="euclidian") {
                     d.R.sub.current = faces.dist.mean,
                     d.R.norm.sub.current = faces.norm.dist.mean))
 }
+
+
+computeDistPubFromPubRound <- function(session, roundCurrent, roundFrom, method="euclidian") {
+  s <- session[session$published == 1,]
+  faces.cur <- s[s$round == roundCurrent,13:25]
+  faces.from <- s[s$round == roundFrom,13:25]
+
+  #faces.norm.cur <- s[s$round == roundFrom,13:25]
+  #faces.norm.from<- s[s$round == roundFrom, 26:38]
+
+  
+  if (any(is.na(faces.cur))) {
+     return(data.frame(round = rep(round, 9),
+   
+                       d.R.sub.current=rep(NA,9),
+                       d.R.norm.sub.current=rep(NA,9)))
+  }
+
+  
+  
+  faces.matrix <- as.matrix(faces.cur)
+  faces.norm.matrix <- as.matrix(faces.norm)
+
+  faces.dist <- dist(faces, method=method)
+  faces.norm.dist <- dist(faces.norm)
+
+  faces.dist.matrix <- as.matrix(faces.dist)
+  faces.norm.dist.matrix <- as.matrix(faces.norm.dist)
+
+  faces.dist.mean <- rowMeans(faces.dist.matrix)
+  faces.norm.dist.mean <- rowMeans(faces.norm.dist.matrix)
+
+  return(data.frame(round = rep(round, 9),
+                    p.number = c(1:9)+1,
+                    d.R.sub.current = faces.dist.mean,
+                    d.R.norm.sub.current = faces.norm.dist.mean))
+}
+
   
 lagg <- function(series, nlag=1, FORWARD = FALSE) {
   obs <- length(series)
