@@ -54,6 +54,95 @@ p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(co
 p
 
 
+# MEAN evaluation per session and
+
+## Group Diversity
+p <- ggplot(overview, aes(emean, d.sub.current))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+## Personal Innovation
+p <- ggplot(overview, aes(emean, d.self.previous))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+## Group Innovation
+p <- ggplot(overview, aes(emean, d.pub.previous))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+
+# ASS KILL MAX per session and
+
+## Group Diversity
+p <- ggplot(overview, aes(asskillmax, d.sub.current))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+## Personal Innovation
+p <- ggplot(overview, aes(asskillmax, d.self.previous))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+## Group Innovation
+p <- ggplot(overview, aes(asskillmax, d.pub.previous))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+
+# ASS KILL Mean per session and
+
+## Group Diversity
+p <- ggplot(overview, aes(asskillmean, d.sub.current))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+## Personal Innovation
+p <- ggplot(overview, aes(asskillmean, d.self.previous))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+## Group Innovation
+p <- ggplot(overview, aes(asskillmean, d.pub.previous))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+
+# ASS LOVE Mean per session and
+
+## Group Diversity
+p <- ggplot(overview, aes(asslovemean, d.sub.current))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+## Personal Innovation
+p <- ggplot(overview, aes(asslovemean, d.self.previous))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+## Group Innovation
+p <- ggplot(overview, aes(asslovemean, d.pub.previous))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+# ASS LOVE Max per session and
+
+## Group Diversity
+p <- ggplot(overview, aes(asslovemax, d.sub.current))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+## Personal Innovation
+p <- ggplot(overview, aes(asslovemax, d.self.previous))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+## Group Innovation
+p <- ggplot(overview, aes(asslovemax, d.pub.previous))
+p <- p + geom_point(aes(group = 1, colour = com), size=3) # + geom_jitter(aes(colour = coo), size = 3)
+p
+
+
 p <- ggplot(overview, aes(asslovemean, abs.ste))
 p <- p + geom_point(aes(group = 1, colour = coo, alpha = coo), size=3) # + geom_jitter(aes(colour = coo), size = 3)
 p

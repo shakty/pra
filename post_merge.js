@@ -346,9 +346,15 @@ db.loadCSV(filein, function(o) {
 				}
 			}
 			
-			i.ass = ((kill_counter + love_counter) / reviews).toFixed(2);
-			i['ass.kill'] = (kill_counter / kill_chances).toFixed(2);
-			i['ass.love'] = (love_counter / love_chances).toFixed(2);
+			if (kill_chances === 0 && love_chances == 0) {
+				i.ass = 'NA';
+			}
+			else {
+				i.ass = ((kill_counter + love_counter) / reviews).toFixed(2);
+			}
+			
+			i['ass.kill'] = kill_chances === 0 ? 'NA' : (kill_counter / kill_chances).toFixed(2);
+			i['ass.love'] = love_chances === 0 ? 'NA' : (love_counter / love_chances).toFixed(2);
 			
 		}
 		else {
@@ -400,11 +406,17 @@ db.loadCSV(filein, function(o) {
 				}
 			}
 			
-			i.ass = ((kill_counter + love_counter) / reviews).toFixed(2);
+			if (kill_chances === 0 && love_chances == 0) {
+				i.ass = 'NA';
+			}
+			else {
+				i.ass = ((kill_counter + love_counter) / reviews).toFixed(2);
+			}
+			
 			i['ass.kill'] = kill_chances === 0 ? 'NA' : (kill_counter / kill_chances).toFixed(2);
 			i['ass.love'] = love_chances === 0 ? 'NA' : (love_counter / love_chances).toFixed(2);
 			
-			console.log(i['ass.love']);
+			//console.log(i['ass.love']);
 			
 		}
 		

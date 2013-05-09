@@ -105,7 +105,8 @@ p.evas <- ggplot(evas, aes(x=value, group=com, colour=com))
 #p.line.rand <- p + aes(colour=rand) + geom_line(); p.line.rand
 
 p.evas.density <- p.evas + geom_density(aes(fill=com),alpha=0.3)
-p.evas.density.title <- p.evas.density + ggtitle("Density curves of ratings by level of competition")
+p.evas.density.title <- p.evas.density + ggtitle("Density curves of ratings by level of competition") 
+p.evas.density.title<- p.evas.density.title + xlab('Rating') + ylab('Density')
 p.evas.density.title
 ggsave(file="./img/evas/evas_density_com.jpg")
 
@@ -147,14 +148,15 @@ p.evas.color
 evascom <- evas[evas$com == 1,]
 p.evascom <- ggplot(evascom, aes(x=value, group=same.ex, colour=same.ex))
 p.evascom.same.ex.density <- p.evascom + geom_density(aes(fill=same.ex),alpha=0.3)
-p.evascom.same.ex.density.title <- p.evascom.same.ex.density + ggtitle("Density curves of ratings for direct competitors or not")
+p.evascom.same.ex.density.title <- p.evascom.same.ex.density + ggtitle("Density curves of review scores") + xlab('Review Score (0-10)') + ylab('Density')
 p.evascom.same.ex.density.title
+ggsave(file="./img/evas/evas_density_direct_competitors.jpg")
 
 evascoo <- evas[evas$com == 0,]
 
 p.evascoo <- ggplot(evas.clean, aes(x=value, group=same.ex, colour=same.ex))
 p.evascoo.same.ex.density <- p.evascoo + geom_density(aes(fill=same.ex),alpha=0.3) + facet_grid( . ~ com)
-p.evascoo.same.ex.density.title <- p.evascoo.same.ex.density + ggtitle("Density curves of ratings: same ex or not, com or not")
+p.evascoo.same.ex.density.title <- p.evascoo.same.ex.density + ggtitle("Density curves of ratings: direct competitors") + xlab("Rating") + ylab("Density")
 p.evascoo.same.ex.density.title
 ggsave(file="./img/evas/evas_density_same_ex_com.jpg")
 
