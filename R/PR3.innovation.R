@@ -33,9 +33,15 @@ fit <- lm(d.pub.cumulative~published, data=pr)
 OPTIMAL1 <- as.numeric(coef(fit)["(Intercept)"]);OPTIMAL1
 
 
+## There seems to be no optimal distance from previous faces,
+## that maximizes your chances of high scores
+
 title <- ggtitle("Diversity, Change and Innovation PUBLISHED")
 p <- ggplot(pr)# + scale_colour_discrete(name = "Variable")
-p <- p + geom_smooth(aes(d.pub.previous, e.mean, colour=published))
+#p <- p + geom_smooth(aes(d.pub.previous, r.mean,  linetype=published))
+p <- p + scale_x_continuous(breaks=seq(0,0.6,0.05))
+p <- p + geom_point(aes(d.sub.current, r.mean, shape=published, colour=com))
+p <- p + geom_smooth(aes(d.sub.current, r.mean), method=lm, se=FALSE)
 #p <- p + geom_smooth(aes(y = d.pub.previous, linetype=published, colour=com), se=FALSE)
 #p <- p + geom_smooth(aes(y = d.sub.current, linetype=com, colour = "Diversity"))
 #p <- p + geom_smooth(aes(y = d.self.previous, linetype=com, colour = "Personal Change"))
@@ -74,6 +80,13 @@ SD_OPTIMAL <- summary(fit)$coefficients[, 2][2]
 OPT_R <- OPTIMAL + SD_OPTIMAL
 OPT_L <- OPTIMAL - SD_OPTIMAL
 
+OPTIMAL <- 0.225
+SD_OPTIMAL <- 0.025
+OPT_R <- OPTIMAL + SD_OPTIMAL
+OPT_L <- OPTIMAL - SD_OPTIMAL
+
+
+
 # Dist from optimal point
 pr$distfromoptimalinn <- abs(pr$d.pub.prev - OPTIMAL)*100
 
@@ -98,7 +111,7 @@ pr$distfromoptimalinn <- abs(apply(as.matrix(pr$d.pub.prev), 1, computeDistFromO
 
 pr$optimaldist.pub.prev <- as.numeric(pr$d.pub.previous < OPT_R & pr$d.pub.previous > OPT_L)
 #fit2 <- lm(e.mean~optimaldist.pub.prev, data=pr)
-fit2 <- lm(e.mean~distfromoptimalinn, data=pr)
+fit2 <- lm(r.mean~distfromoptimalinn, data=pr)
 summary(fit2)
 
 

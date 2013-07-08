@@ -105,8 +105,5 @@ p
 survey[,c("dur","session","PC","fun","stress")]
 
 
-
-merge(
-
 #p.survey <- ggplot(survey, 
 

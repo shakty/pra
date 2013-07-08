@@ -73,31 +73,7 @@ chisq.test(copytab)
 
 
 
-##
-
-
-
 # EVAS
-evas <- data.frame()
-for (e in c("e1", "e2", "e3")) {
-  mydata <- pr.melted[pr.melted$variable == e, ]
-  sameex <- paste0(e, ".same.ex")
-  samecol <- paste0(e, ".same.color")
-  sameex.column <- with(mydata, get(sameex))
-  samecol.column <- with(mydata, get(samecol))
-  metadata <- mydata[,sessions.ids]
-  myeva <- data.frame(metadata,
-                      round=mydata$round,
-                      changed=mydata$e.changed,
-                      copy=mydata$copy, published=mydata$published,
-                      order=mydata$variable, value=mydata$value,
-                      same.ex=sameex.column, same.color=samecol.column)  
-  evas <- rbind(evas, myeva) 
-}
-
-evas$same.ex <- as.factor(evas$same.ex)
-evas$same.color <- as.factor(evas$same.color)
-evas$same.changed <- as.factor(evas$changed)
 
 p.evas <- ggplot(evas, aes(x=value, group=com, colour=com))
 

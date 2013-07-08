@@ -245,7 +245,14 @@ for (s in unique(pr$session)) {
   overview <- rbind(overview,tmp)
 }
 
-
+overviewPlayers <- data.frame()
+for (s in unique(pr$session)) {
+  tmp <- pr[pr$session == s,c(1:11,length(pr))]
+  for (p in unique(tmp$p.number)) {
+    tmpPlayers <- tmp[tmp$p.number == p,][1,]
+    overviewPlayers <- rbind(overviewPlayers,tmpPlayers)
+  }
+}
 
 
 ## Summarizes data.
