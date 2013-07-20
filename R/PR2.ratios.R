@@ -6,7 +6,8 @@ pr$d.ratio.selfprev.subcur <- pr$d.self.previous / pr$d.subcur
 title <- ggtitle("Efficiency of Personal Innovation")
 p <- ggplot(pr, aes(d.self.previous, d.pub.previous))
 p <- p + geom_jitter(aes(colour=com), alpha=.2)
-p <- p + geom_smooth(aes(colour=com),size=2, method=lm, se=FALSE)
+#p <- p + geom_smooth(aes(colour=com),size=2, method=lm, se=FALSE)
+p <- p + geom_smooth(aes(colour=com),size=2)
 p <- p + title + ylab("Group Innovation") + xlab("Personal Innovation")
 p
 ggsave(file="./img/ratios/efficiency_personal_inn.jpg")

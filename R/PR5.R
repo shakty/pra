@@ -368,9 +368,9 @@ for (s in unique(pr$session)) {
       pr[pr$round == r & pr$p.id == p,]$e3.d <- f3d
       pr[pr$round == r & pr$p.id == p,]$e.d <- mean(c(f1d,f2d,f3d))
       # for convenience adding diff from d.pub.previous
-      pr[pr$round == r & pr$p.id == p,]$e1.d.pub.previous <- tmp[tmp$p.id == row$e1.id, "d.pub.previous"]
-      pr[pr$round == r & pr$p.id == p,]$e2.d.pub.previous <- tmp[tmp$p.id == row$e2.id, "d.pub.previous"]
-      pr[pr$round == r & pr$p.id == p,]$e3.d.pub.previous <- tmp[tmp$p.id == row$e3.id, "d.pub.previous"]
+      pr[pr$round == r & pr$p.id == p,]$e1.d.pub.previous <- ifelse(is.na(row$e1.id), NA, tmp[tmp$p.id == row$e1.id, "d.pub.previous"])
+      pr[pr$round == r & pr$p.id == p,]$e2.d.pub.previous <- ifelse(is.na(row$e2.id), NA, tmp[tmp$p.id == row$e2.id, "d.pub.previous"])
+      pr[pr$round == r & pr$p.id == p,]$e3.d.pub.previous <- ifelse(is.na(row$e3.id), NA, tmp[tmp$p.id == row$e3.id, "d.pub.previous"])
     }
   }
 }
@@ -425,6 +425,10 @@ p + geom_point(aes(colour=com))
 
 
 evas$consistent <- evas$dist / max(evas$dist, na.rm = T) - (evas$value / 10)
+
+p <- ggplot(evas, aes(x=dist, y=value))
+p + geom_point(aes(colour=com)) + facet_grid(session~.)
+
 
 p <- ggplot(evas, aes(x=round,y=consistent))
 p + geom_jitter(aes(colour=com)) + geom_smooth(aes(group=com, color=com))
@@ -537,7 +541,7 @@ t
 # differences in time
 ts = c()
 for (r in unique(evas$round)) {
-  tmp <- evas[evas$com == 0 & evas$round < r+1,] # or == r
+  tmp <- evas[evas$com == 0 & evas$round == r,] # or == r
   t = t.test(value ~ same.color, data = tmp)
   ts <- rbind(ts,c(t$estimate, t$p.value))
 }
@@ -547,7 +551,13 @@ ts.fr$diff <- ts.fr$same - ts.fr$other
 ts.fr$round <- seq(1:30)
 
 p <- ggplot(ts.fr, aes(x=round, y=diff))
-p + geom_line()
+p + geom_line() + ylab("Difference") + xlab("Round") + ggtitle("Difference in evaluation between colors")
+
+
+p <- ggplot(ts.fr, aes(x=round))
+p + geom_line(aes(y=same, color="same")) + geom_line(aes(y=other, color="other")) + ylab("Difference") + xlab("Round") + ggtitle("Evaluations same vs other color non-COM")
+ggsave(file="./img/color/same_vs_other_color_ts_nonCOM.jpg")
+
 
 p <- ggplot(ts.fr, aes(x=round, y=p.value))
 p + geom_line()

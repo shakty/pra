@@ -11,36 +11,36 @@ pr.ass.love.all <- pr$e.mean > LOVE
 pr.ass.kill.all <- pr$e.mean < HATE
 
 
-title <- ggtitle("ASS+ reviews counts by level of competition")
+title <- ggtitle("A.S.S.+ reviews counts by level of competition")
 p <- ggplot(pr[!is.na(pr$ass),], aes(as.factor(ass)))
 p <- p + geom_bar(aes(colour = com, fill=com), position="dodge", na.rm=TRUE)
-p <-  p + title + ylab("Count") + xlab("ASS levels")
+p <-  p + title + ylab("Count") + xlab("A.S.S.+ levels")
 p
 ggsave(file="./img/ass/assplus_reviews_count.jpg")
 
 
-title <- ggtitle("ASS reviews counts by level of competition")
+title <- ggtitle("A.S.S. reviews counts by level of competition")
 p <- ggplot(pr[!is.na(pr$ass.kill),], aes(as.factor(ass.kill)))
 p <- p + geom_bar(aes(colour = com, fill=com), position="dodge", na.rm=TRUE)
-p <-  p + title + ylab("Count") + xlab("ASS levels")
+p <-  p + title + ylab("Count") + xlab("A.S.S. levels")
 p
 ggsave(file="./img/ass/ass_reviews_count.jpg")
 
 
 
-title <- ggtitle("Average ASS+ index in time")
+title <- ggtitle("Average A.S.S.+ index in time")
 p <- ggplot(pr, aes(round, ass))
 p <- p + geom_jitter(aes(colour=com), alpha=.2)
 p <- p + geom_smooth(aes(colour=com),size=2)
-p <- p + title + ylab("ASS index") + xlab("Round")
+p <- p + title + ylab("A.S.S. index") + xlab("Round")
 p
 ggsave(file="./img/ass/assplus_reviews_intime.jpg")
 
-title <- ggtitle("Average ASS index in time")
+title <- ggtitle("Average A.S.S. index in time")
 p <- ggplot(pr, aes(round, ass.kill))
 p <- p + geom_jitter(aes(colour=com), alpha=.2)
 p <- p + geom_smooth(aes(colour=com),size=2)
-p <- p + title + ylab("ASS index") + xlab("Round")
+p <- p + title + ylab("A.S.S. index") + xlab("Round")
 p
 ggsave(file="./img/ass/ass_reviews_intime.jpg")
 
@@ -75,6 +75,25 @@ test.t <- t.test(r.consensus ~ com, data=pr)
 test.t
 
 
+# Test T on averages 1 player x session: 144 obs
+
+groupvars <- c("session", "p.number")
+p.summary.r.consensus <- summaryPlayers(pr, "r.consensus", groupvars, na.rm=TRUE)
+
+summary.player <- merge(overviewPlayers, p.summary.r.consensus)
+
+test.t <- t.test(r.consensus ~ com, data=summary.player)
+test.t
+
+# Test T on averages 1 x session: 16 obs: significant!
+
+groupvars <- c("session")
+s.summary.r.consensus <- summaryPlayers(pr, "r.consensus", groupvars, na.rm=TRUE)
+
+summary.session <- merge(overview, s.summary.r.consensus)
+
+test.t <- t.test(r.consensus ~ com, data=summary.session)
+test.t
 
 # p <- p  + geom_jitter(aes(colour = com))
 
@@ -120,17 +139,17 @@ overview <- merge(b, overview)
 
 
 
-title <- ggtitle("ASS reviewers counts by level of competition")
+title <- ggtitle("A.S.S. reviewers counts by level of competition")
 p <- ggplot(a, aes(ass.kill))
 p <- p + geom_bar(aes(fill = com), colour="white", binwidth=0.25)
-p <- p + title + ylab("Counts") + xlab("ASS levels") #+ scale_x_discrete(breaks=c(0, 0.2, 1))
+p <- p + title + ylab("Counts") + xlab("A.S.S. levels") #+ scale_x_discrete(breaks=c(0, 0.2, 1))
 p
 ggsave(file="./img/ass/asscounts_by_competition.jpg")
 
-title <- ggtitle("ASS+ reviewers counts by level of competition")
+title <- ggtitle("A.S.S.+ reviewers counts by level of competition")
 p <- ggplot(a, aes(ass))
 p <- p + geom_bar(aes(fill = com), colour="white", binwidth=0.25)
-p <- p + title + ylab("Counts") + xlab("ASS+ levels") #+ scale_x_discrete(breaks=c(0, 0.2, 1))
+p <- p + title + ylab("Counts") + xlab("A.S.S.+ levels") #+ scale_x_discrete(breaks=c(0, 0.2, 1))
 p
 ggsave(file="./img/ass/asspluscounts_by_competition.jpg")
 
@@ -151,7 +170,7 @@ p <- p + geom_line(aes(group = 1, colour = session), size=3) # + geom_jitter(aes
 p <- p + facet_grid(session~., margins = T);
 p
 
-## ASS,KILL and npubs
+## A.S.S.,KILL and npubs
 acom <- a[a$com ==1,]
 p <- ggplot(acom, aes(ass.kill, npubs))
 p <- p + geom_line(aes(group = 1, colour = session), size=3) # + geom_jitter(aes(colour = coo), size = 3)

@@ -106,6 +106,9 @@ p.evas.facets <- p.evas + aes(colour=com) + geom_boxplot()
 summary(evas[evas$com==1,])
 summary(evas[evas$com==0,])
 
+x <- evas[evas$com==1,"value"]
+y <- evas[evas$com==0,"value"]
+ks.test(x,y)
 
 evas.t.com <- t.test(value ~ com, data=evas)
 

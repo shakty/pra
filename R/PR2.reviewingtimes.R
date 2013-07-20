@@ -5,8 +5,11 @@ source("PR2.init.R")
 prcopy <- pr[pr$round > 2,]
 prcopy <- pr
 
+
+#a <- summaryPlayers(prcopy, "time.review", c("session", "p.id"), TRUE)
+#a <- merge(a, overview)
 a <- summaryPlayers(prcopy, "time.review", c("session", "p.id"), TRUE)
-a <- merge(a, overview)
+a <- merge(a, overviewPlayers)
 b <- summaryPlayers(prcopy, "time.creation", c("session", "p.id"), TRUE)
 a <- cbind(a, b)
 b <- summaryPlayers(prcopy, "time.dissemination", c("session", "p.id"), TRUE)
@@ -15,34 +18,52 @@ b <- summaryPlayers(prcopy, "r.mean", c("session", "p.id"), TRUE)
 a <- cbind(a, b)
 b <- summaryPlayers(prcopy, "e.mean", c("session", "p.id"), TRUE)
 a <- cbind(a, b)
-b <- summaryPlayers(prcopy, "d.sub.previous", c("session", "p.id"), TRUE)
+b <- summaryPlayers(prcopy, "d.pub.previous", c("session", "p.id"), TRUE)
 a <- cbind(a, b)
 b <- summaryPlayers(prcopy, "d.sub.current", c("session", "p.id"), TRUE)
 a <- cbind(a, b)
 b <- summaryPlayers(prcopy, "d.self.previous", c("session", "p.id"), TRUE)
 a <- cbind(a, b)
 
+# ASS and TIME
+b <- summaryPlayers(prcopy, "ass.kill", c("session", "p.id"), TRUE)
+a <- cbind(a, b)
+
+p <- ggplot(a, aes(log(time.review), ass.kill))
+p + geom_point(aes(col=com))
+
+# The more time for creating a painting the less likely they are an ass
+# Interestingly, not the more time for a review... (also try the log)
+fit <- lm(ass.kill ~ com + choice + time.creation, data=a)
+summary(fit)
+
+
 names(pr.pubs)[2:3] <- c("not.pub","pub")
 
+# SUCCESS and ASS
 sumPubs <- function(xx, col) {
   c(npubs = sum(as.numeric(xx[,col])-1, na.rm=TRUE))
 }
 
 a$npubs = ddply(prcopy,  c("session", "p.id"), .drop = TRUE, .fun = sumPubs, "published")$npubs
 
-
-fit <- glm(npubs~time.review, data=a, family=poisson)
-
-plot(a$time.review,a$npubs)
+p <- ggplot(a[a$com==1,], aes(ass.kill, npubs))
+p + geom_point(aes(col=com))
 
 
-aa <- a[a$round > 2,]
-
-plot(a$time.creation,a$npubs)
+# CREATION TIME AND SUCCESS
 
 p <- ggplot(a, aes(time.creation, npubs))
-p <- p + geom_point(aes(group = 1, colour = coo, alpha=com), size=3)
-p
+p + geom_point(aes(col=com))
+
+
+# The more time you use for the creation the more likely you are to publish!
+fit <- lm(npubs ~ com + choice + time.creation, data=a)
+summary(fit)
+
+# This is true in both conditions separately
+fit <- lm(npubs ~ time.creation, data=a[a$com==0,])
+summary(fit)
 
 ## Creation density curve
 

@@ -259,18 +259,15 @@ for (e in c("e1", "e2", "e3")) {
   mydata <- pr.melted[pr.melted$variable == e, ]
   sameex <- paste0(e, ".same.ex")
   samecol <- paste0(e, ".same.color")
-  d <- paste0(e, ".d")
   sameex.column <- with(mydata, get(sameex))
   samecol.column <- with(mydata, get(samecol))
-  d.column <- with(mydata, get(d))
   metadata <- mydata[,sessions.ids]
   myeva <- data.frame(metadata,
                       round=mydata$round,
                       changed=mydata$e.changed,
                       copy=mydata$copy, published=mydata$published,
                       order=mydata$variable, value=mydata$value,
-                      same.ex=sameex.column, same.color=samecol.column,
-                      dist=d.column)  
+                      same.ex=sameex.column, same.color=samecol.column)  
   evas <- rbind(evas, myeva) 
 }
 
