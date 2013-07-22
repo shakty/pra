@@ -278,47 +278,50 @@ var db = new NDDB();
 var DRYRUN = true;
 
 var filein = './data/ALL/allnew.csv';
-var fileout = './data/ALL/allnew_20JUL.csv';
+var fileout = './data/ALL/session_diffs.csv';
 
 
-var writer = csv.createCsvStreamWriter(fs.createWriteStream(fileout));
-writer.writeRecord(headings);		
+// var writer = csv.createCsvStreamWriter(fs.createWriteStream(fileout));
+// writer.writeRecord(headings);		
 
 console.log(pra);
-
-
 return;
+
+db.index('session', function(i) {
+    return i.session;
+});
+
+db.index('sessionround', function(i) {
+    return i.session + '_' + i.round;
+});
+
+db.index('player', function(i) {
+    return i['p.id'];
+});
+
+
+    
+
+//return;
 db.loadCSV(filein, function(o) {
     console.log('DONE');
     //writer.writeRecord(J.obj2Array(i));
-    
-for (s in unique(pr$session)) {
-  for (r in unique(pr$round)) {
-    tmp <- pr[pr$session == s & pr$round == r,]
-    for (p in unique(tmp$p.id)) {
-      row <- tmp[tmp$p.id == p,]
-      f <- getFace(s,r,p,tmp) # own face
-      f1 <- getFace(s,r,row$e1.id,tmp)
-      f2 <- getFace(s,r,row$e2.id,tmp)
-      f3 <- getFace(s,r,row$e3.id,tmp)
-      f1d <- getFaceDist(f,f1)
-      f2d <- getFaceDist(f,f2)
-      f3d <- getFaceDist(f,f3)
-      # this works as long as p.id is unique across all sessions
-      # somehow I cannot select both session and p.id ...
-      pr[pr$round == r & pr$p.id == p,]$e1.d <- f1d
-      pr[pr$round == r & pr$p.id == p,]$e2.d <- f2d
-      pr[pr$round == r & pr$p.id == p,]$e3.d <- f3d
-      pr[pr$round == r & pr$p.id == p,]$e.d <- mean(c(f1d,f2d,f3d))
-      # for convenience adding diff from d.pub.previous
-      pr[pr$round == r & pr$p.id == p,]$e1.d.pub.previous <- ifelse(is.na(row$e1.id), NA, tmp[tmp$p.id == row$e1.id, "d.pub.previous"])
-      pr[pr$round == r & pr$p.id == p,]$e2.d.pub.previous <- ifelse(is.na(row$e2.id), NA, tmp[tmp$p.id == row$e2.id, "d.pub.previous"])
-      pr[pr$round == r & pr$p.id == p,]$e3.d.pub.previous <- ifelse(is.na(row$e3.id), NA, tmp[tmp$p.id == row$e3.id, "d.pub.previous"])
-    }
-  }
-}
-    
+  
+    var a = db.shuffle().first();
+    console.log(a);
 
+    var s, r, tmpdb;
+    for (s = 1; s < 17; s++) {
+        for (r = 1; r < 31; r++) {
+            tmpdb = db.select('session','=',s)
+                .select('round','=',r)
+                .execute();
+                
+            
+            tmpdb.each(
+        }
+    }
+    
 });
 
 

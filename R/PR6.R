@@ -79,3 +79,160 @@ p <- p + geom_smooth(aes(colour=com),size=2)
 p <- p + title + ylab("Consensus Idx") + xlab("Round")
 p
 ggsave(file="./img/ass/diff_consensus_referees_original_shuffled_100.jpg")
+
+
+
+### Are subjects becoming more different withing one trajectory
+### Are sessions becoming incresingly more different each other
+
+# Average distance of each face from the faces submitted in the same round in other exhibitions
+
+
+
+### Innovation measured only between published faces
+# initial measure was: current submission - previous published
+
+
+title <- ggtitle("Two measures of Group Innovation:\n \"All Subs\" vs \"Pubs Only\" - \"Pubs prev. round\"")
+p <- ggplot(pr, aes(round, d.pub.previous))
+p <- p + geom_jitter(aes(colour=published), alpha=.2)
+p <- p + geom_smooth(aes(colour=published),size=2)
+p <- p + title + ylab("Innovation") + xlab("Round")
+p <- p +  scale_colour_discrete(name="Measures", labels=c("All Subs", "Pubs Only"))
+p
+ggsave(file="./img/innovation/inn_only_pub_or_all.jpg")
+
+pr.clean <- pr[!is.na(pr$published),]
+title <- ggtitle("Group Innovation:  \"Pubs Only\" - \"Pubs prev. round\"")
+p <- ggplot(pr.clean, aes(round, d.pub.previous))
+p <- p + geom_jitter(aes(colour=com), alpha=.2)
+p <- p + geom_smooth(aes(colour=com),size=2)
+p <- p + facet_grid(~published, margin=F)
+p <- p + title + ylab("Innovation") + xlab("Round")
+p
+ggsave(file="./img/innovation/inn_only_pub_or_all_by_COM.jpg")
+
+
+
+myLabeller <- function(var, value){
+  value <- as.character(value)
+  if (var == "published") { 
+    value[value== 0] <- "Rejected"
+    value[value== 1] <- "Published"
+  }
+  return(value)
+}
+
+pr.clean <- pr[!is.na(pr$published),]
+title <- ggtitle("Group Innovation measured as \"Pubs Only\" - \"Pubs prev. round\"")
+p <- ggplot(pr.clean, aes(round, d.pub.previous))
+#p <- p + geom_jitter(aes(colour=com), alpha=.2)
+p <- p + geom_smooth(aes(colour=com),size=2)
+p <- p + facet_grid(~published, margin=F, labeller=myLabeller)
+p <- p + title + ylab("Innovation") + xlab("Round")
+p
+ggsave(file="./img/innovation/inn_only_pub_or_all_by_COM.jpg")
+
+# On the average of all conditions there seems to be no big difference in measuring Group Innovation in the following two ways:
+# A - submitted - pub.prev
+# B - published.now - pub.prev
+# I think that B is the most correct way of defining group innovation
+# If I distinguish between each treatment condition I see that choosing B over A makes a big difference for non COM
+# Group Innovation is largely decreasing earlier, and more markedly
+
+
+### Is there a preference for diversity that is driving the process of differentiation
+
+
+# e1, e2, e3 are evaluations DONE by the player
+# r1, r2, r3 are reviews RECEIVED by the player
+
+
+
+p <- ggplot(pr,aes(d.pub.previous, r.mean))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth(method="lm")
+p <- p + facet_grid(~com)
+p
+
+p <- ggplot(pr,aes(d.pub.previous, r.mean, color=published))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth()
+p <- p + facet_grid(~com)
+p
+
+
+p <- ggplot(pr,aes(d.pub.cumulative, r.mean))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth()
+p <- p + facet_grid(~com,margins=T)
+p
+
+p <- ggplot(pr,aes(d.self.previous, r.mean))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth()
+p <- p + facet_grid(~com,margins=T)
+p
+
+#  + I(d.pub.previous^2)
+fit <- lm(r.mean~d.pub.previous, data=pr[pr$com == 0,])
+summary(fit)
+# There seems to be an optimal distance between paintings and score. This is more true for COM. Although the data are very noisy
+
+
+## Other tests
+
+p <- ggplot(pr[pr$session==1,],aes(d.pub.previous, r.mean))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth()
+p <- p + facet_wrap(~round,ncol=4)
+p
+
+p <- ggplot(pr[pr$session==1,],aes(d.pub.previous, r.mean))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth()
+p <- p + facet_wrap(~round,ncol=4)
+p
+
+p <- ggplot(pr[pr$session==9,],aes(d.pub.previous, r.mean, color=com) )# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth()
+p <- p + facet_wrap(~round,ncol=1) + opts(strip.background = theme_blank(),
+                             strip.text.x = theme_blank())
+p
+
+p <- ggplot(pr[pr$session==9,],aes(d.pub.previous, r.mean, color=com) )# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth()
+p <- p + facet_wrap(~round,ncol=1) + opts(strip.background = theme_blank(),
+                             strip.text.x = theme_blank())
+p
+
+p <- ggplot(pr[pr$session==9,],aes(round, d.pub.previous) )# + scale_colour_discrete(name = "Variable")
+p <- p +  geom_linerange(aes(ymin=0,ymax=0.7)) + coord_flip()
+p
+
+datac <- ddply(data, groupvars, .drop=.drop,
+                   .fun= function(xx, col, na.rm) {
+                           c( N    = length2(xx[,col], na.rm=na.rm),
+                              mean = mean   (xx[,col], na.rm=na.rm),
+                              sd   = sd     (xx[,col], na.rm=na.rm)
+                              )
+                          },
+                    measurevar,
+                    na.rm
+             )
+
+pr$maxPubInn <- max(pr$d.pub.previous,na.rm)
+
+
+
+
+p <- ggplot(pr)# + scale_colour_discrete(name = "Variable")
+p <- p + geom_smooth(aes(d.pub.previous, r.mean, colour=published))
+p <- p + facet_grid(round~com)
+p
+
+pr$r.mean.from5 <- pr$r.mean - 5
+
+pr$ <- ifelse(pr$published, 

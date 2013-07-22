@@ -28,6 +28,14 @@ p <- ggplot(pr)# + scale_colour_discrete(name = "Variable")
 p <- p + geom_smooth(aes(d.pub.cumulative, e.mean, colour=published))
 p
 
+## Like in pub.prev there is a similar level of dissimilarity from pub.cum
+## that maximize my chances of getting published
+p <- ggplot(pr)# + scale_colour_discrete(name = "Variable")
+p <- p + geom_smooth(aes(d.pub.previous, e.mean, colour=published))
+p
+
+
+
 ## The optimal level is very close to the optimal level 
 fit <- lm(d.pub.cumulative~published, data=pr)
 OPTIMAL1 <- as.numeric(coef(fit)["(Intercept)"]);OPTIMAL1
@@ -73,6 +81,12 @@ p <- ggplot(rounds)# + scale_colour_discrete(name = "Variable")
 p <- p + geom_histogram(aes(x=inn.mean, fill="all"))
 p <- p + geom_histogram(aes(x=inn.pub.mean, fill="pub"))
 p
+
+
+fit <- lm(r.mean~d.pub.previous + I(d.pub.previous^2), data=pr)
+
+plot(pr$d.pub.previous, pr$r.mean)
+points(pr$d.pub.previous, predict(fit), type="l", col="red", lwd=2)
 
 fit <- lm(d.pub.previous~published, data=pr)
 OPTIMAL <- as.numeric(coef(fit)["(Intercept)"])
