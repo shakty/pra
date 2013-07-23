@@ -147,7 +147,8 @@ ggsave(file="./img/innovation/inn_only_pub_or_all_by_COM.jpg")
 # e1, e2, e3 are evaluations DONE by the player
 # r1, r2, r3 are reviews RECEIVED by the player
 
-
+# ATTENTION!! r*.same.ex is always 0. However, e*.same.ex is correctly set
+# ATTENTION!! r*changed seems unreliable sometimes
 
 p <- ggplot(pr,aes(d.pub.previous, r.mean))# + scale_colour_discrete(name = "Variable")
 p <- p + geom_jitter(alpha=.2)
@@ -212,16 +213,7 @@ p <- ggplot(pr[pr$session==9,],aes(round, d.pub.previous) )# + scale_colour_disc
 p <- p +  geom_linerange(aes(ymin=0,ymax=0.7)) + coord_flip()
 p
 
-datac <- ddply(data, groupvars, .drop=.drop,
-                   .fun= function(xx, col, na.rm) {
-                           c( N    = length2(xx[,col], na.rm=na.rm),
-                              mean = mean   (xx[,col], na.rm=na.rm),
-                              sd   = sd     (xx[,col], na.rm=na.rm)
-                              )
-                          },
-                    measurevar,
-                    na.rm
-             )
+
 
 pr$maxPubInn <- max(pr$d.pub.previous,na.rm)
 

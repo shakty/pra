@@ -326,9 +326,7 @@ db.loadCSV(filein, function(o) {
      
         pid = i['p.id'];
         
-        meanAssKill = 0;
-        meanAssLove = 0;
-        mean5 = 0;
+    
 
         i['r1.ass.kill'] = 0;
         i['r1.ass.love'] = 0;
@@ -339,8 +337,9 @@ db.loadCSV(filein, function(o) {
         
         if (i['r1.id'] && i['r1.id'] !== 'NA') {
             
-            reviewer = tmpdb.select('p.id', '=', i['r1.id']).first();
+            reviewer = tmpdb.selexec('p.id', '=', i['r1.id']).first();
             rIdx = 0;
+            
             
             if (reviewer['e1.id'] === pid) {
                 rIdx = 'e1';
@@ -352,16 +351,14 @@ db.loadCSV(filein, function(o) {
                 rIdx = 'e3';
             }  
             else {
-                console.log('Oops! Reviewer not found!', pid);
+                console.log('Oops! Reviewer 1 not found!', pid);
             }
             
             if (rIdx) {     
-                if (reviewer[rIdx + '.same.ex'] === '1' && parseInt(reviewer[rIdx]) < KILL) {
-		    
-                    debugger;
+                if (reviewer[rIdx + '.same.ex'] === '1' && parseFloat(reviewer[rIdx]) < KILL) {		    
                     i['r1.ass.kill'] = 1;
 		}
-                else if (parseInt(reviewer.e3) > LOVE) {
+                else if (parseFloat(reviewer[rIdx]) > LOVE) {
 		    i['r1.ass.love'] = 1;
                 }
             }
@@ -370,7 +367,7 @@ db.loadCSV(filein, function(o) {
 
         if (i['r2.id'] && i['r2.id'] !== 'NA') {
             
-            reviewer = tmpdb.select('p.id', '=', i['r2.id']).first();
+            reviewer = tmpdb.selexec('p.id', '=', i['r2.id']).first();
             rIdx = 0;
 
             if (reviewer['e1.id'] === pid) {
@@ -383,14 +380,14 @@ db.loadCSV(filein, function(o) {
                 rIdx = 'e3';
             }  
             else {
-                console.log('Oops! Reviewer not found!');
+                console.log('Oops! Reviewer 2 not found!');
             }
             
             if (rIdx) {
-                if (reviewer[rIdx + '.same.ex'] === '1' && parseInt(reviewer[rIdx]) < KILL) {
+                if (reviewer[rIdx + '.same.ex'] === '1' && parseFloat(reviewer[rIdx]) < KILL) {
 		    i['r2.ass.kill'] = 1;
 		}
-                else if (parseInt(reviewer.e3) > LOVE) {
+                else if (parseFloat(reviewer[rIdx]) > LOVE) {
 		    i['r2.ass.love'] = 1;
                 }
             } 
@@ -412,93 +409,127 @@ db.loadCSV(filein, function(o) {
                 rIdx = 'e3';
             }  
             else {
-                console.log('Oops! Reviewer not found!');
+                console.log('Oops! Reviewer 3 not found!');
             }
             
             if (rIdx) {
-                if (reviewer[rIdx + '.same.ex'] === '1' && parseInt(reviewer[rIdx]) < KILL) {
+                if (reviewer[rIdx + '.same.ex'] === '1' && parseFloat(reviewer[rIdx]) < KILL) {
 		    i['r3.ass.kill'] = 1;
 		}
-                else if (parseInt(reviewer.e3) > LOVE) {
+                else if (parseFloat(reviewer[rIdx]) > LOVE) {
 		    i['r3.ass.love'] = 1;
                 }
             } 
             
         }
-        r1err = true, r2err = true, r3err = true;
+
+        r1err = false, r2err = false, r3err = false;
+
         tmpCount = 0;
+        mean5 = 0;
         if (i.r1 != '5' || i['r1.changed'] === '1') {
-            mean5 = mean5 + parseInt(i.r1);
+            mean5 = mean5 + parseFloat(i.r1);
             tmpCount++;
-            r1err = false;
+        }
+        else {
+            r1err = true;
         }
         if (i.r2 != '5' || i['r2.changed'] === '1') {
-            mean5 = mean5 + parseInt(i.r2);
+            mean5 = mean5 + parseFloat(i.r2);
             tmpCount++;
-            r2err = false;
+        }
+        else {
+            r2err = true;
         }
         if (i.r3 != '5' || i['r3.changed'] === '1') {
-            mean5 = mean5 + parseInt(i.r3);
+            mean5 = mean5 + parseFloat(i.r3);
             tmpCount++;
-            r3err = false;
+        }
+        else {
+            r3err = true;
         }
         i['r.mean.clean5'] = tmpCount ? (mean5 / tmpCount).toFixed(2) : 'NA';
         
         tmpCount = 0;
+        meanAssKill = 0;
         if (i['r1.ass.kill'] === 0) {
-            meanAssKill = meanAssKill + parseInt(i.r1);
+            meanAssKill = meanAssKill + parseFloat(i.r1);
             tmpCount++;
-            r1err = false;
+        }
+        else {
+            r1err = true;
         }
         if (i['r2.ass.kill'] === 0) {
-            meanAssKill = meanAssKill + parseInt(i.r2);
+            meanAssKill = meanAssKill + parseFloat(i.r2);
             tmpCount++;
-            r2err = false;
         }
-        if (i['r2.ass.kill'] === 0) {
-            meanAssKill = meanAssKill + parseInt(i.r3);
+        else {
+            r2err = true;
+        }
+        if (i['r3.ass.kill'] === 0) {
+            meanAssKill = meanAssKill + parseFloat(i.r3);
             tmpCount++;
-            r3err = false;
+        }
+        else {
+            r3err = true;
         }
         i['r.mean.clean.asskill'] = tmpCount ? (meanAssKill / tmpCount).toFixed(2) : 'NA';            
         
         tmpCount = 0;
+        meanAssLove = 0;
         if (i['r1.ass.love'] === 0) {
-            meanAssLove = meanAssLove + parseInt(i.r1);
+            meanAssLove = meanAssLove + parseFloat(i.r1);
             tmpCount++;
-            r1err = false;
+        }
+        else {
+            r1err = true;
         }
         if (i['r2.ass.love'] === 0) {
-            meanAssLove = meanAssLove + parseInt(i.r2);
+            meanAssLove = meanAssLove + parseFloat(i.r2);
             tmpCount++;
-            r2err = false;
         }
-        if (i['r2.ass.love'] === 0) {
-            meanAssLove = meanAssLove + parseInt(i.r3);
-            tmpCount++;
-            r3err = false;
+        else {
+            r2err = true;
+        }
+        if (i['r3.ass.love'] === 0) {
+            meanAssLove = meanAssLove + parseFloat(i.r3);
+            tmpCount++;         
+        }
+        else {
+            r3err = true;
         }
         i['r.mean.clean.asslove'] = tmpCount ? (meanAssLove / tmpCount).toFixed(2) : 'NA';  
+        
+        
         
         tmpCount = 0;  
         cleanMean = 0;
         if (!r1err) {
-            cleanMean = cleanMean + parseInt(i.r1);
+            cleanMean = cleanMean + parseFloat(i.r1);
             tmpCount++;
         }
         if (!r2err) {
-            cleanMean = cleanMean + parseInt(i.r2);
+            cleanMean = cleanMean + parseFloat(i.r2);
             tmpCount++;
         }
         if (!r3err) {
-            cleanMean = cleanMean + parseInt(i.r3);
+            cleanMean = cleanMean + parseFloat(i.r3);
             tmpCount++;
         }
         i['r.mean.clean'] = tmpCount ? (cleanMean / tmpCount).toFixed(2) : 'NA';  
+
+        i.rmean = i['r.mean'];
+        i.r15 = i['r1.changed'];
+        i.r25 = i['r2.changed'];
+        i.r35 = i['r3.changed'];
+        i.r1b = i['r1'];
+        i.r2b = i['r2'];
+        i.r3b = i['r3'];
+        
     
     });
 
-    console.log(db.selexec('r1','=','0').shuffle().first());
+    console.log(db.selexec('r1.ass.kill','=','1').shuffle().first());
     return;
 
     // Distance between published faces
