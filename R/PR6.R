@@ -120,6 +120,10 @@ myLabeller <- function(var, value){
     value[value== 0] <- "Rejected"
     value[value== 1] <- "Published"
   }
+  else if (var == "com") {
+    value[value== 0] <- "NON-COM"
+    value[value== 1] <- "COM"
+  } 
   return(value)
 }
 
@@ -152,28 +156,84 @@ ggsave(file="./img/innovation/inn_only_pub_or_all_by_COM.jpg")
 
 p <- ggplot(pr,aes(d.pub.previous, r.mean))# + scale_colour_discrete(name = "Variable")
 p <- p + geom_jitter(alpha=.2)
-p <- p + geom_smooth(method="lm")
-p <- p + facet_grid(~com)
+p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from faces published in the previous round and score")
 p
+ggsave(file="./img/optimaldist/pubprev_score.jpg")
+
+
+p <- ggplot(pr,aes(d.pub.previous, r.mean, color=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from faces published in the previous round and score")
+p
+ggsave(file="./img/optimaldist/pubprev_score_by_com.jpg")
 
 p <- ggplot(pr,aes(d.pub.previous, r.mean, color=published))# + scale_colour_discrete(name = "Variable")
 p <- p + geom_jitter(alpha=.2)
 p <- p + geom_smooth()
-p <- p + facet_grid(~com)
+p <- p + facet_grid(~com, labeller=myLabeller) + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from faces published in the previous round and score")
 p
+ggsave(file="./img/optimaldist/pubprev_score_by_com_by_pub.jpg")
+
+p <- ggplot(pr,aes(d.pub.cumulative, r.mean,color=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from all previously published faces and score")
+p
+ggsave(file="./img/optimaldist/pubcum_score_by_com.jpg")
+
+p <- ggplot(pr,aes(d.self.previous, r.mean, color=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from all previously published faces and score")
+p
+ggsave(file="./img/optimaldist/selfdist_score_by_com.jpg")
 
 
-p <- ggplot(pr,aes(d.pub.cumulative, r.mean))# + scale_colour_discrete(name = "Variable")
+
+## using clean mean
+p <- ggplot(pr,aes(d.pub.previous, r.mean.clean, color=com))
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth() + xlab('Distance') + ylab('Cleaned Review Score') + ggtitle("Distance from all previously published faces and **clean** score")
+p
+ggsave(file="./img/optimaldist/pubprev_cleanmean_by_com.jpg")
+
+p <- ggplot(pr,aes(d.pub.cumulative, r.mean.clean, color=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth() + xlab('Distance') + ylab('Cleand Review Score') + ggtitle("Distance from all previously published faces and **clean** score")
+p
+ggsave(file="./img/optimaldist/pubcum_cleanmean_by_com.jpg")
+
+
+
+cutLabels <- c("0-5", "5-10", "10-15", "15-20","20-25","25-30")
+pr$round.cut5 <- cut(pr$round, breaks=seq(0,30,5), labels=cutLabels)
+
+cutLabels <- c("0-10", "10-20", "20-30")
+pr$round.cut10 <- cut(pr$round, breaks=seq(0,30,10), labels=cutLabels)
+
+p <- ggplot(pr,aes(d.pub.previous, r.mean.clean, color=com))# + scale_colour_discrete(name = "Variable")
 p <- p + geom_jitter(alpha=.2)
 p <- p + geom_smooth()
-p <- p + facet_grid(~com,margins=T)
+#p <- p + facet_grid(~round.cut10)
+p <- p + facet_wrap(~round.cut5,ncol=2)
 p
 
-p <- ggplot(pr,aes(d.self.previous, r.mean))# + scale_colour_discrete(name = "Variable")
-p <- p + geom_jitter(alpha=.2)
-p <- p + geom_smooth()
-p <- p + facet_grid(~com,margins=T)
+
+pr$d.pub.previous.cut <- cut(pr$d.pub.previous, breaks=seq(0,max(pr$d.pub.previous,na.rm=T),0.05))
+
+
+pr.clean <- pr[!is.na(pr$d.pub.previous.cut),]
+p <- ggplot(pr.clean,aes(d.pub.previous.cut, color=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_boxplot(aes(y=r.mean))
+p <- p + facet_grid(round.cut10~.)
+#p <- p + facet_wrap(~round.cut5,ncol=2)
 p
+
+pr.clean <- pr[!is.na(pr$d.pub.previous.cut),]
+p <- ggplot(pr.clean,aes(d.pub.previous.cut, color=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_boxplot(aes(y=r.mean))
+p <- p + facet_grid(round.cut10~.)
+p
+
+
 
 #  + I(d.pub.previous^2)
 fit <- lm(r.mean~d.pub.previous, data=pr[pr$com == 0,])

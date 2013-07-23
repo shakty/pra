@@ -192,7 +192,9 @@ library(car)
 
 setwd("/var/www/pra/data/ALL/")
 
-pr <- read.table(file="./allnew.csv", head=TRUE, sep=",")
+#pr <- read.table(file="./allnew.csv", head=TRUE, sep=",")
+pr <- read.table(file="./allnew_20jul.csv", head=TRUE, sep=",")
+
 
 pr$com <- as.factor(pr$com)
 pr$coo <- as.factor(pr$coo)

@@ -9,6 +9,8 @@ var fs = require('fs'),
 var times = fs.readFileSync('./data/times.js', 'utf-8');
 	times = JSON.parse(times);
 
+var distFromAvgFace = pra.dist.distanceFromAvgFace;
+
 var featnames = pra.featnames.all;
 
 var sessions = {
@@ -278,7 +280,13 @@ var headings = [
     'r.mean.clean5',
     'r.mean.clean.asskill',
     'r.mean.clean.asslove',
-    'r.mean.clean'
+    'r.mean.clean',
+
+    // distance from average face
+    'dfa.pub.prev',
+    'dfa.sub.prev',
+    'dfa.pub.cum',
+    'dfa.sub.curr'
 
 ];
 
@@ -290,8 +298,8 @@ var db = new NDDB();
 
 var DRYRUN = true;
 
-var filein = './data/ALL/allnew.csv';
-var fileout = './data/ALL/allnew_20jul.csv';
+var filein = './data/ALL/allnew_20jul.csv';
+var fileout = './data/ALL/allnew_23jul.csv';
 
 
 var writer = csv.createCsvStreamWriter(fs.createWriteStream(fileout));
@@ -312,7 +320,8 @@ db.hash('player', function(i) {
     return i['p.id'];
 });
 
-
+var plnumbers = pra.plnumbers;
+   debugger 
 
 var db2 = new NDDB(); // here we save new computations
 
@@ -324,266 +333,73 @@ db.loadCSV(filein, function(o) {
     console.log(db.size());
     db.rebuildIndexes();
 
-
-    db.each(function(i) {
-        var s,r,idx,pid,reviewer, meanAssKill, meanAssLove, mean5, tmpCount, rIdx;
-        var r1err, r2err, r3err, cleanMean;
-        var LOVE = 9.5;
-        var KILL = 0.5;
-        
-        
-        s = i.session;
-        r = i.round;
-        idx = s + '_' + r;
-        tmpdb = db.sessionround[idx];
-     
-        pid = i['p.id'];
-        
-    
-
-        i['r1.ass.kill'] = 0;
-        i['r1.ass.love'] = 0;
-        i['r2.ass.kill'] = 0;
-        i['r2.ass.love'] = 0;
-        i['r3.ass.kill'] = 0;
-        i['r3.ass.love'] = 0;
-        
-        if (i['r1.id'] && i['r1.id'] !== 'NA') {
-            
-            reviewer = tmpdb.selexec('p.id', '=', i['r1.id']).first();
-            rIdx = 0;
-            
-            
-            if (reviewer['e1.id'] === pid) {
-                rIdx = 'e1';
-            }  
-            else if (reviewer['e2.id'] === pid) {
-                rIdx = 'e2';
-            }  
-            else if (reviewer['e3.id'] === pid) {
-                rIdx = 'e3';
-            }  
-            else {
-                console.log('Oops! Reviewer 1 not found!', pid);
-            }
-            
-            if (rIdx) {     
-                if (reviewer[rIdx + '.same.ex'] === '1' && parseFloat(reviewer[rIdx]) < KILL) {		    
-                    i['r1.ass.kill'] = 1;
-		}
-                else if (parseFloat(reviewer[rIdx]) > LOVE) {
-		    i['r1.ass.love'] = 1;
-                }
-            }
-            
-        }
-
-        if (i['r2.id'] && i['r2.id'] !== 'NA') {
-            
-            reviewer = tmpdb.selexec('p.id', '=', i['r2.id']).first();
-            rIdx = 0;
-
-            if (reviewer['e1.id'] === pid) {
-                rIdx = 'e1';
-            }  
-            else if (reviewer['e2.id'] === pid) {
-                rIdx = 'e2';
-            }  
-            else if (reviewer['e3.id'] === pid) {
-                rIdx = 'e3';
-            }  
-            else {
-                console.log('Oops! Reviewer 2 not found!');
-            }
-            
-            if (rIdx) {
-                if (reviewer[rIdx + '.same.ex'] === '1' && parseFloat(reviewer[rIdx]) < KILL) {
-		    i['r2.ass.kill'] = 1;
-		}
-                else if (parseFloat(reviewer[rIdx]) > LOVE) {
-		    i['r2.ass.love'] = 1;
-                }
-            } 
-            
-        }
-        
-        if (i['r3.id'] && i['r3.id'] !== 'NA') {
-            
-            reviewer = tmpdb.selexec('p.id', '=', i['r3.id']).first();
-            rIdx = 0;
-
-            if (reviewer['e1.id'] === pid) {
-                rIdx = 'e1';
-            }  
-            else if (reviewer['e2.id'] === pid) {
-                rIdx = 'e2';
-            }  
-            else if (reviewer['e3.id'] === pid) {
-                rIdx = 'e3';
-            }  
-            else {
-                console.log('Oops! Reviewer 3 not found!');
-            }
-            
-            if (rIdx) {
-                if (reviewer[rIdx + '.same.ex'] === '1' && parseFloat(reviewer[rIdx]) < KILL) {
-		    i['r3.ass.kill'] = 1;
-		}
-                else if (parseFloat(reviewer[rIdx]) > LOVE) {
-		    i['r3.ass.love'] = 1;
-                }
-            } 
-            
-        }
-
-        r1err = false, r2err = false, r3err = false;
-
-        tmpCount = 0;
-        mean5 = 0;
-        if (i.r1 != '5' || i['r1.changed'] === '1') {
-            mean5 = mean5 + parseFloat(i.r1);
-            tmpCount++;
-        }
-        else {
-            r1err = true;
-        }
-        if (i.r2 != '5' || i['r2.changed'] === '1') {
-            mean5 = mean5 + parseFloat(i.r2);
-            tmpCount++;
-        }
-        else {
-            r2err = true;
-        }
-        if (i.r3 != '5' || i['r3.changed'] === '1') {
-            mean5 = mean5 + parseFloat(i.r3);
-            tmpCount++;
-        }
-        else {
-            r3err = true;
-        }
-        i['r.mean.clean5'] = tmpCount ? (mean5 / tmpCount).toFixed(2) : 'NA';
-        
-        tmpCount = 0;
-        meanAssKill = 0;
-        if (i['r1.ass.kill'] === 0) {
-            meanAssKill = meanAssKill + parseFloat(i.r1);
-            tmpCount++;
-        }
-        else {
-            r1err = true;
-        }
-        if (i['r2.ass.kill'] === 0) {
-            meanAssKill = meanAssKill + parseFloat(i.r2);
-            tmpCount++;
-        }
-        else {
-            r2err = true;
-        }
-        if (i['r3.ass.kill'] === 0) {
-            meanAssKill = meanAssKill + parseFloat(i.r3);
-            tmpCount++;
-        }
-        else {
-            r3err = true;
-        }
-        i['r.mean.clean.asskill'] = tmpCount ? (meanAssKill / tmpCount).toFixed(2) : 'NA';            
-        
-        tmpCount = 0;
-        meanAssLove = 0;
-        if (i['r1.ass.love'] === 0) {
-            meanAssLove = meanAssLove + parseFloat(i.r1);
-            tmpCount++;
-        }
-        else {
-            r1err = true;
-        }
-        if (i['r2.ass.love'] === 0) {
-            meanAssLove = meanAssLove + parseFloat(i.r2);
-            tmpCount++;
-        }
-        else {
-            r2err = true;
-        }
-        if (i['r3.ass.love'] === 0) {
-            meanAssLove = meanAssLove + parseFloat(i.r3);
-            tmpCount++;         
-        }
-        else {
-            r3err = true;
-        }
-        i['r.mean.clean.asslove'] = tmpCount ? (meanAssLove / tmpCount).toFixed(2) : 'NA';  
-        
-        
-        
-        tmpCount = 0;  
-        cleanMean = 0;
-        if (!r1err) {
-            cleanMean = cleanMean + parseFloat(i.r1);
-            tmpCount++;
-        }
-        if (!r2err) {
-            cleanMean = cleanMean + parseFloat(i.r2);
-            tmpCount++;
-        }
-        if (!r3err) {
-            cleanMean = cleanMean + parseFloat(i.r3);
-            tmpCount++;
-        }
-        i['r.mean.clean'] = tmpCount ? (cleanMean / tmpCount).toFixed(2) : 'NA';  
-
-        writer.writeRecord(J.obj2Array(i));
-
-// test
-//        i.rmean = i['r.mean'];
-//        i.r15 = i['r1.changed'];
-//        i.r25 = i['r2.changed'];
-//        i.r35 = i['r3.changed'];
-//        i.r1b = i['r1'];
-//        i.r2b = i['r2'];
-//        i.r3b = i['r3'];
-        
-    
-    });
-
-    
-
-    //console.log(db.selexec('r1.ass.kill','=','1').shuffle().first());
-    return;
-
     // Distance between published faces
-    var s, r, tmpdb, pubFacesOld, pubFacesNew, dist;
+    var s, r, tmpdbSession, tmpdbRoundprev, tmpdbRound;
+    var face, faces, facesRound, pubFacesOld, pubFacesNew;
+    var dfa_pubprev, dfa_subprev, dfa_pubcum, dfa_subcurr;
     for (s = 1; s < 17; s++) {
+        tmpdbSession = db.session[s];
+        
         for (r = 1; r < 31; r++) {
-          //  tmpdb = db.select('session','=',s)
-          //      .select('round','=',r)
-          //      .execute();
-
-            tmpdb = db.sessionround[s + '_' + r];
             
+            tmpdbRound = db.sessionround[s + '_' + r];
+            facesRound = tmpdbRound.fetchSubObj([
+                'f.head_radius',
+                'f.head_scale_x',
+                'f.head_scale_y',
+                'f.eye_height',
+                'f.eye_spacing',
+                'f.eye_scale_x',
+                'f.eye_scale_y',
+                'f.eyebrow_length',
+                'f.eyebrow_eyedistance',
+                'f.eyebrow_angle',
+                'f.eyebrow_spacing',
+                'f.mouth_top_y',
+                'f.mouth_bottom_y'
+            ]);
             
-            
-            if (r === 1) {
-                dist = 'NA';
-            }
-            else {
-                pubFacesOld = pra.getPublishedFaces(tmpdb, r-1, false);
-                pubFacesNew = pra.getPublishedFaces(tmpdb, r, false);
-                if (pubFacesOld.size() === 0 || pubFacesNew.size() === 0) {
-                    dist = 'NA';
+            J.each(plnumbers, function(p) {
+                var player;
+                player = tmpdbRound.selexec('p.number', '=', p);
+                if (player.size() !== 1) {
+                    console.log('Opss! Something wrong happened');
                 }
-                else {
-                    dist = getAvgFaceDistanceGroupFromGroup(pubFacesOld, pubFacesNew);
-                }
+                player = player.first();
+                face = pra.getFaceFromRow(player);
+                
+                dfa_subcurr = distFromAvgFace(face, facesRound);
+                console.log(dfa_subcurr);
+                
+//                if (r === 1) {
+//                    dfa_pubprev = 'NA';
+//                    dfa_subprev = 'NA';
+//                    dfa_pubcum = 'NA';
+//                }
+//                else {
+//                    tmpdbRoundPrev = db.sessionround[s + '_' + r];
+//                    
+//                    pubFacesOld = pra.getPublishedFaces(tmpdb, r-1, false);
+//                    pubFacesNew = pra.getPublishedFaces(tmpdb, r, false);
+//                    if (pubFacesOld.size() === 0 || pubFacesNew.size() === 0) {
+//                        dist = 'NA';
+//                    }
+//                    else {
+//                        dist = getAvgFaceDistanceGroupFromGroup(pubFacesOld, pubFacesNew);
+//                    }
+//
+//                }
+                
+                // Do it from session to session
 
-            }
-            
-            // Do it from session to session
-
-            db2.insert({
-                session: s,
-                round: r,
-                'd.pub2pub': dist
+//                db2.insert({
+//                    session: s,
+//                    round: r,
+//                    'd.pub2pub': dist
+//                });
             });
+            
+
             
         }
     }
