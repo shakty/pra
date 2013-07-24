@@ -234,11 +234,95 @@ p <- p + facet_grid(round.cut10~.)
 p
 
 
+## Distance from the average face and score
 
-#  + I(d.pub.previous^2)
-fit <- lm(r.mean~d.pub.previous, data=pr[pr$com == 0,])
+p <- ggplot(pr,aes(dfa.pub.prev, r.mean))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from faces published in the previous round and score")
+p
+
+
+
+p <- ggplot(pr,aes(dfa.pub.prev, r.mean.clean, color=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from faces published in the previous round and score")
+p
+
+p <- ggplot(pr,aes(dfa.pub.prev, r.mean.clean, color=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from faces published in the previous round and score")
+p
+
+
+p <- ggplot(pr,aes(dfa.pub.prev, r.mean.clean))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth()
+p <- p + facet_grid(~com, labeller=myLabeller) + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from the average published face\n in the previous round and **clean** score")
+p
+
+ggsave(file="./img/optimaldist/dfa_pubprev_cleanmean_by_com.jpg")
+
+p <- ggplot(pr,aes(dfa.pub.prev, r.mean.clean))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.5, aes(color=session))
+p <- p + geom_smooth()
+p <- p + facet_grid(round.cut5~com, labeller=myLabeller) + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from the average published face\n in the previous round and **clean** score") + ylim(0, 10)
+p
+
+
+
+
+fit <- rlm(r.mean.clean ~ dfa.pub.prev + I(dfa.pub.prev^2) , data=pr[pr$com == 0,])
 summary(fit)
+
+opar <- par(mfrow = c(2, 2), oma = c(0, 0, 1.1, 0))
+plot(ols, las = 1)
+plot(fit)
+par(opar)
+a <- predict(fit,newdata=pr)
+plot(pr$dfa.pub.prev,a)
+
 # There seems to be an optimal distance between paintings and score. This is more true for COM. Although the data are very noisy
+
+
+x dfa.pu
+
+
+a <- loess(pr$dfa.pub.prev ~ pr$r.mean.clean)
+plot(a$x, a$y)
+
+ggsave(file="./img/optimaldist/dfa_pubprev_cleanmean_by_com.jpg")
+
+
+pr$dfa.pub.prev.cut <- cut(pr$dfa.pub.prev, breaks=seq(0,max(pr$dfa.pub.prev,na.rm=T),0.02))
+
+pr.clean <- pr[!is.na(pr$dfa.pub.prev.cut),]
+p <- ggplot(pr.clean,aes(dfa.pub.prev.cut, color=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_boxplot(aes(y=r.mean),notch=T)
+#p <- p + facet_grid(round.cut10~.)
+#p <- p + facet_wrap(~round.cut5,ncol=2)
+p
+
+
+pr$dfa.pub.prev.bigcut <- cut(pr$dfa.pub.prev, breaks=c(0,0.05,0.4,max(pr$dfa.pub.prev,na.rm=T)))
+
+pr.clean <- pr[!is.na(pr$dfa.pub.prev.bigcut),]
+p <- ggplot(pr.clean,aes(dfa.pub.prev.bigcut, color=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_boxplot(aes(y=r.mean.clean))
+p
+
+pr.clean <- pr[!is.na(pr$dfa.pub.prev.bigcut),]
+p <- ggplot(pr.clean,aes(x=r.mean.clean, group=com,color=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_density(aes(fill=com),alpha=0.3)
+p <- p + facet_grid(~dfa.pub.prev.bigcut) 
+p
+
+p.evas <- ggplot(evas, aes(x=value, group=com, colour=com))
+p.evas.density <- p.evas + geom_density(aes(fill=com),alpha=0.3)
+p.evas.density.title <- p.evas.density + ggtitle("Density curves of ratings by level of competition") 
+p.evas.density.title<- p.evas.density.title + xlab('Rating') + ylab('Density')
+p.evas.density.title
+
+
 
 
 ## Other tests

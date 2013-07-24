@@ -6,12 +6,14 @@ var fs = require('fs'),
 	d3 = require('d3'),
 	pra = require('pra-core');
 
+
 var times = fs.readFileSync('./data/times.js', 'utf-8');
 	times = JSON.parse(times);
 
-var distFromAvgFace = pra.dist.distanceFromAvgFace;
+var distFromAvgFace = pra.R.distanceFromAvgFace;
+var computeAvgFace = pra.R.averageFace;
 
-var featnames = pra.featnames.all;
+var fnames = pra.featnamesR.all;
 
 var sessions = {
              // 25 JAN 2013
@@ -321,7 +323,6 @@ db.hash('player', function(i) {
 });
 
 var plnumbers = pra.plnumbers;
-   debugger 
 
 var db2 = new NDDB(); // here we save new computations
 
@@ -335,7 +336,9 @@ db.loadCSV(filein, function(o) {
 
     // Distance between published faces
     var s, r, tmpdbSession, tmpdbRoundprev, tmpdbRound;
-    var face, faces, facesRound, pubFacesOld, pubFacesNew;
+    var face, faces, facesRound, pubFacesOld, pubFacesOldCum, subFacesOld;
+    var avgFaceRound;
+    var dbCumRound;
     var dfa_pubprev, dfa_subprev, dfa_pubcum, dfa_subcurr;
     for (s = 1; s < 17; s++) {
         tmpdbSession = db.session[s];
@@ -343,21 +346,7 @@ db.loadCSV(filein, function(o) {
         for (r = 1; r < 31; r++) {
             
             tmpdbRound = db.sessionround[s + '_' + r];
-            facesRound = tmpdbRound.fetchSubObj([
-                'f.head_radius',
-                'f.head_scale_x',
-                'f.head_scale_y',
-                'f.eye_height',
-                'f.eye_spacing',
-                'f.eye_scale_x',
-                'f.eye_scale_y',
-                'f.eyebrow_length',
-                'f.eyebrow_eyedistance',
-                'f.eyebrow_angle',
-                'f.eyebrow_spacing',
-                'f.mouth_top_y',
-                'f.mouth_bottom_y'
-            ]);
+            facesRound = tmpdbRound.fetchSubObj(fnames);
             
             J.each(plnumbers, function(p) {
                 var player;
@@ -366,37 +355,57 @@ db.loadCSV(filein, function(o) {
                     console.log('Opss! Something wrong happened');
                 }
                 player = player.first();
-                face = pra.getFaceFromRow(player);
-                
+               
+                face = pra.R.getFaceFromRow(player);
+         
                 dfa_subcurr = distFromAvgFace(face, facesRound);
-                console.log(dfa_subcurr);
                 
-//                if (r === 1) {
-//                    dfa_pubprev = 'NA';
-//                    dfa_subprev = 'NA';
-//                    dfa_pubcum = 'NA';
-//                }
-//                else {
-//                    tmpdbRoundPrev = db.sessionround[s + '_' + r];
-//                    
-//                    pubFacesOld = pra.getPublishedFaces(tmpdb, r-1, false);
-//                    pubFacesNew = pra.getPublishedFaces(tmpdb, r, false);
-//                    if (pubFacesOld.size() === 0 || pubFacesNew.size() === 0) {
-//                        dist = 'NA';
-//                    }
-//                    else {
-//                        dist = getAvgFaceDistanceGroupFromGroup(pubFacesOld, pubFacesNew);
-//                    }
-//
-//                }
-                
+                if (r === 1) {
+                    dfa_pubprev = 'NA';
+                    dfa_subprev = 'NA';
+                    dfa_pubcum = 'NA';
+                }
+                else {
+                    tmpdbRoundPrev = db.sessionround[s + '_' + (r-1)];
+                    
+                    // Published at R-1
+                    pubFacesOld = pra.R.getPublishedFaces(tmpdbRoundPrev, r-1, false);
+                    if (pubFacesOld.length === 0) {
+                        dfa_pubprev = 'NA';
+                    }
+                    else {
+                        dfa_pubprev = distFromAvgFace(face, pubFacesOld);
+                    }
+
+                    // Published until R-1
+                    pubFacesOldCum = pra.R.getPublishedFaces(tmpdbSession, r-1, true);
+                    if (pubFacesOldCum.length === 0) {
+                        dfa_pubcum = 'NA';
+                    }
+                    else {
+                        dfa_pubcum = distFromAvgFace(face, pubFacesOld);
+                    }
+
+                    // Submitted at R-1
+                    subFacesOld = tmpdbRoundPrev.fetchSubObj(fnames);
+                    dfa_subprev = distFromAvgFace(face, subFacesOld);
+                }
+
+//              console.log(dfa_pubprev);
+//              console.log(dfa_subprev);
+//              console.log(dfa_pubcum);
+//              console.log(dfa_subcurr);
+            
                 // Do it from session to session
 
-//                db2.insert({
-//                    session: s,
-//                    round: r,
-//                    'd.pub2pub': dist
-//                });
+                
+                
+                player['dfa.pubprev'] = dfa_pubprev;
+                player['dfa.subprev'] = dfa_subprev;
+                player['dfa.pubcum'] = dfa_pubcum;
+                player['dfa.subcurr'] = dfa_subcurr;
+                
+                writer.writeRecord(J.obj2Array(player));
             });
             
 
