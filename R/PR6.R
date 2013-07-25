@@ -1,6 +1,142 @@
 source("PR2.init.R")
 library(gvlma)
 
+myLabeller <- function(var, value){
+  value <- as.character(value)
+  if (var == "published") { 
+    value[value== 0] <- "Rejected"
+    value[value== 1] <- "Published"
+  }
+  else if (var == "com") {
+    value[value== 0] <- "NON-COM"
+    value[value== 1] <- "COM"
+  } 
+  return(value)
+}
+sd.clean.asskill <- function(row) {
+  v <- c()
+  if (as.numeric(row["r1.ass.kill"]) == 0) {
+    v <- c(v,row["r1"])
+  }
+  if (as.numeric(row["r2.ass.kill"]) == 0) {
+    v <- c(v,row["r2"])
+  }
+  if (as.numeric(row["r3.ass.kill"]) == 0) {
+    v <- c(v,row["r3"])
+  }
+  if (length(v)>1) {
+    return(sd(v))
+  }
+  else {
+    return(NA)
+  }
+}
+cix.clean.asskill <- function(row) {
+  v <- c()
+  if (as.numeric(row["r1.ass.kill"]) == 0) {
+    v <- c(v,row["r1"])
+  }
+  if (as.numeric(row["r2.ass.kill"]) == 0) {
+    v <- c(v,row["r2"])
+  }
+  if (as.numeric(row["r3.ass.kill"]) == 0) {
+    v <- c(v,row["r3"])
+  }
+  if (length(v) == 2) {
+    return(1 - sd(v)/MAXSTD2)
+  }
+  else if (length(v) == 3) {
+    return(1 - sd(v)/MAXSTD)
+  }
+  else {
+    return(NA)
+  }
+}
+
+sd.clean.5 <- function(row) {
+  v <- c()
+  if (!is.na(row["r1.changed"]) & as.numeric(row["r1.changed"]) == 1) {
+    v <- c(v,row["r1"])
+  }
+  if (!is.na(row["r2.changed"]) & as.numeric(row["r2.changed"]) == 1) {
+    v <- c(v,row["r2"])
+  }
+  if (!is.na(row["r3.changed"]) & as.numeric(row["r3.changed"]) == 1) {
+    v <- c(v,row["r3"])
+  }
+  if (length(v)>1) {
+    return(sd(v))
+  }
+  else {
+    return(NA)
+  }
+}
+cix.clean.5 <- function(row) {
+  v <- c()
+  if (!is.na(row["r1.changed"]) & as.numeric(row["r1.changed"]) == 1) {
+    v <- c(v,row["r1"])
+  }
+  if (!is.na(row["r2.changed"]) & as.numeric(row["r2.changed"]) == 1) {
+    v <- c(v,row["r2"])
+  }
+  if (!is.na(row["r3.changed"]) & as.numeric(row["r3.changed"]) == 1) {
+    v <- c(v,row["r3"])
+  }
+  if (length(v) == 2) {
+    return(1 - sd(v)/MAXSTD2)
+  }
+  else if (length(v) == 3) {
+    return(1 - sd(v)/MAXSTD)
+  }
+  else {
+    return(NA)
+  }
+}
+
+sd.clean <- function(row) {
+  v <- c()
+  if (!is.na(row["r1.changed"]) & as.numeric(row["r1.changed"]) == 1 & as.numeric(row["r1.ass.kill"]) == 0 ) {
+    v <- c(v,row["r1"])
+  }
+  if (!is.na(row["r2.changed"]) & as.numeric(row["r2.changed"]) == 1 & as.numeric(row["r2.ass.kill"]) == 0) {
+    v <- c(v,row["r2"])
+  }
+  if (!is.na(row["r3.changed"]) & as.numeric(row["r3.changed"]) == 1 & as.numeric(row["r3.ass.kill"]) == 0) {
+    v <- c(v,row["r3"])
+  }
+  if (length(v) > 1) {
+    return(sd(v))
+  }
+  else {
+    return(NA)
+  }
+}
+cix.clean <- function(row) {
+  v <- c()
+  if (!is.na(row["r1.changed"]) & as.numeric(row["r1.changed"]) == 1 & as.numeric(row["r1.ass.kill"]) == 0 ) {
+    v <- c(v,row["r1"])
+  }
+  if (!is.na(row["r2.changed"]) & as.numeric(row["r2.changed"]) == 1 & as.numeric(row["r2.ass.kill"]) == 0) {
+    v <- c(v,row["r2"])
+  }
+  if (!is.na(row["r3.changed"]) & as.numeric(row["r3.changed"]) == 1 & as.numeric(row["r3.ass.kill"]) == 0) {
+    v <- c(v,row["r3"])
+  }
+  if (length(v) == 2) {
+    return(1 - sd(v)/MAXSTD2)
+  }
+  else if (length(v) == 3) {
+    return(1 - sd(v)/MAXSTD)
+  }
+  else {
+    return(NA)
+  }
+}
+
+#####################
+## START
+####################
+
 # Are ratings just spreading out more?
 
 p <- ggplot(evas)
@@ -8,7 +144,6 @@ p + geom_boxplot(aes(factor(round), value, color=com)) + facet_grid(~com, margin
 ggsave(file="./img/evas/distribution_reviews_in_time.jpg")
 
 # Under competitive conditions yes
-
 
 # Shuffle ratings
 
@@ -24,7 +159,11 @@ r2s <- a[trainindex2,"r2"]
 r3s <- a[trainindex3,"r3"]
 as <- cbind(r1s,r2s,r3s)
 
-MAXSTD <- sqrt(6.66^2 + 3.33^2 + 3.33^2)
+
+MAXSTD <- sd(c(0,0,10))
+MAXSTD2 <- sd(c(0,10))
+
+
 library(matrixStats)
 ITER <- 100
 
@@ -62,7 +201,7 @@ p <- p + geom_jitter(aes(colour=com), alpha=.2)
 p <- p + geom_smooth(aes(colour=com),size=2)
 p <- p + title + ylab("Consensus Idx") + xlab("Round")
 p
-#ggsave(file="./img/ass/consensus_referees.jpg")
+ggsave(file="./img/ass/consensus_referees.jpg")
 
 title <- ggtitle("Consensus among referees\n shuffled reviews (100x)")
 p <- ggplot(pr, aes(round, rs.consensus))
@@ -81,34 +220,64 @@ p
 ggsave(file="./img/ass/diff_consensus_referees_original_shuffled_100.jpg")
 
 
-
 # What if we remove the ass reviews?
+####################################
 
-pr.clean <- pr[  pr$r2.ass.kill == 0 & pr$r3.ass.kill == 0,]
+pr$r.sd.clean.asskill <- apply(pr, 1, sd.clean.asskill)
+pr$r.sd.clean.5 <- apply(pr, 1, sd.clean.5)
+pr$r.sd.clean <- apply(pr, 1, sd.clean)
 
-pr$r.sd.clean.ass <- apply(pr, 1, ff)
+pr$r.consensus.clean <- apply(pr, 1, cix.clean)
+pr$r.consensus.clean.5 <- apply(pr, 1, cix.clean.5)
+pr$r.consensus.clean.asskill <- apply(pr, 1, cix.clean.asskill)
 
-sd.clean.ass <- function(row) {
-  v <- c()
-  if (row["r1.ass.kill"] == 0) {
-    v <- c(v,row["r1"])
-  }
-  if (row["r2.ass.kill"] == 0) {
-    v <- c(v,row["r2"])
-  }
-  if (row["r3.ass.kill"] == 0) {
-    v <- c(v,row["r3"])
-  }
-  if (length(v)>1) {
-    return(sd(v))
-  }
-  else {
-    return(NA)
-  }
-}
+title <- ggtitle("Cleaned consensus among referees")
+p <- ggplot(pr, aes(round, r.consensus.clean))
+p <- p + geom_jitter(aes(colour=com), alpha=.2)
+p <- p + geom_smooth(aes(colour=com),size=2)
+p <- p + title + ylab("Cleaned Consensus Idx") + xlab("Round")
+p
+ggsave(file="./img/ass/diff_cleaned_consensus_referees.jpg")
 
-pr$r.consensus.clean <- 1 - pr$r.std / MAXSTD
+title <- ggtitle("Consensus among referees cleaned from ASS reviews")
+p <- ggplot(pr, aes(round, r.consensus.clean.asskill))
+p <- p + geom_jitter(aes(colour=com), alpha=.2)
+p <- p + geom_smooth(aes(colour=com),size=2)
+p <- p + title + ylab("Consensus Idx") + xlab("Round")
+p
+ggsave(file="./img/ass/diff_cleaned_from_ASS_consensus_referees.jpg")
 
+title <- ggtitle("Consensus among referees cleaned from 3FIVES reviews")
+p <- ggplot(pr, aes(round, r.consensus.clean.5))
+p <- p + geom_jitter(aes(colour=com), alpha=.2)
+p <- p + geom_smooth(aes(colour=com),size=2)
+p <- p + title + ylab("Consensus Idx") + xlab("Round")
+p
+ggsave(file="./img/ass/diff_cleaned_from_5_consensus_referees.jpg")
+
+
+title <- ggtitle("Difference in consensus among referees\n original **cleaned** reviews - shuffled reviews (100x)")
+p <- ggplot(pr, aes(round, r.consensus.clean - rs.consensus))
+p <- p + geom_jitter(aes(colour=com), alpha=.2)
+p <- p + geom_smooth(aes(colour=com),size=2)
+p <- p + title + ylab("Consensus Idx") + xlab("Round")
+p
+
+title <- ggtitle("Difference in consensus among referees\n original **cleaned from ASS** reviews - shuffled reviews (100x)")
+p <- ggplot(pr, aes(round, r.consensus.clean.asskill - rs.consensus))
+p <- p + geom_jitter(aes(colour=com), alpha=.2)
+p <- p + geom_smooth(aes(colour=com),size=2)
+p <- p + title + ylab("Consensus Idx") + xlab("Round")
+p
+
+title <- ggtitle("Difference in consensus among referees\n original **cleaned from 3FIVES** reviews - shuffled reviews (100x)")
+p <- ggplot(pr, aes(round, r.consensus.clean.5 - rs.consensus)) #  
+p <- p + geom_jitter(aes(colour=com), alpha=.2)
+p <- p + geom_smooth(aes(colour=com),size=2)
+p <- p + title + ylab("Consensus Idx") + xlab("Round")
+p
+
+ggsave(file="./img/ass/diff_consensus_referees_original_shuffled_100.jpg")
 
 
 ### Are subjects becoming more different withing one trajectory
@@ -143,18 +312,6 @@ ggsave(file="./img/innovation/inn_only_pub_or_all_by_COM.jpg")
 
 
 
-myLabeller <- function(var, value){
-  value <- as.character(value)
-  if (var == "published") { 
-    value[value== 0] <- "Rejected"
-    value[value== 1] <- "Published"
-  }
-  else if (var == "com") {
-    value[value== 0] <- "NON-COM"
-    value[value== 1] <- "COM"
-  } 
-  return(value)
-}
 
 pr.clean <- pr[!is.na(pr$published),]
 title <- ggtitle("Group Innovation measured as \"Pubs Only\" - \"Pubs prev. round\"")
