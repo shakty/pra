@@ -19,7 +19,7 @@ trainindex1 <- sample(index)
 trainindex2 <- sample(index)
 trainindex3 <- sample(index)
 
-r1s <- a[trainindex,"r1"]
+r1s <- a[trainindex1,"r1"]
 r2s <- a[trainindex2,"r2"]
 r3s <- a[trainindex3,"r3"]
 as <- cbind(r1s,r2s,r3s)
@@ -41,7 +41,7 @@ for (i in 1:ITER) {
       trainindex1 <- sample(index)
       trainindex2 <- sample(index)
       trainindex3 <- sample(index)
-      r1s <- c(r1s, rows[trainindex,"r1"])
+      r1s <- c(r1s, rows[trainindex1,"r1"])
       r2s <- c(r2s, rows[trainindex2,"r2"])
       r3s <- c(r3s, rows[trainindex3,"r3"])
     }
@@ -79,6 +79,35 @@ p <- p + geom_smooth(aes(colour=com),size=2)
 p <- p + title + ylab("Consensus Idx") + xlab("Round")
 p
 ggsave(file="./img/ass/diff_consensus_referees_original_shuffled_100.jpg")
+
+
+
+# What if we remove the ass reviews?
+
+pr.clean <- pr[  pr$r2.ass.kill == 0 & pr$r3.ass.kill == 0,]
+
+pr$r.sd.clean.ass <- apply(pr, 1, ff)
+
+sd.clean.ass <- function(row) {
+  v <- c()
+  if (row["r1.ass.kill"] == 0) {
+    v <- c(v,row["r1"])
+  }
+  if (row["r2.ass.kill"] == 0) {
+    v <- c(v,row["r2"])
+  }
+  if (row["r3.ass.kill"] == 0) {
+    v <- c(v,row["r3"])
+  }
+  if (length(v)>1) {
+    return(sd(v))
+  }
+  else {
+    return(NA)
+  }
+}
+
+pr$r.consensus.clean <- 1 - pr$r.std / MAXSTD
 
 
 
@@ -163,7 +192,7 @@ ggsave(file="./img/optimaldist/pubprev_score.jpg")
 
 p <- ggplot(pr,aes(d.pub.previous, r.mean, color=com))# + scale_colour_discrete(name = "Variable")
 p <- p + geom_jitter(alpha=.2)
-p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from faces published in the previous round and score")
+p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from faces published in the previous round and **clean** score")
 p
 ggsave(file="./img/optimaldist/pubprev_score_by_com.jpg")
 
@@ -182,7 +211,7 @@ ggsave(file="./img/optimaldist/pubcum_score_by_com.jpg")
 
 p <- ggplot(pr,aes(d.self.previous, r.mean, color=com))# + scale_colour_discrete(name = "Variable")
 p <- p + geom_jitter(alpha=.2)
-p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from all previously published faces and score")
+p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from all previously published faces and **clean** score")
 p
 ggsave(file="./img/optimaldist/selfdist_score_by_com.jpg")
 
@@ -194,6 +223,21 @@ p <- p + geom_jitter(alpha=.2)
 p <- p + geom_smooth() + xlab('Distance') + ylab('Cleaned Review Score') + ggtitle("Distance from all previously published faces and **clean** score")
 p
 ggsave(file="./img/optimaldist/pubprev_cleanmean_by_com.jpg")
+
+ <- ggplot(pr,aes(d.pub.previous, r.mean.clean, color=published))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth()
+p <- p + facet_grid(~com, labeller=myLabeller) + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from faces published in the previous round and score")
+p
+ggsave(file="./img/optimaldist/pubprev_cleanmean_by_com_by_pub.jpg")
+
+
+p <- ggplot(pr,aes(d.pub.previous, r.mean.clean.asslove, color=com))
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth() + xlab('Distance') + ylab('ASS-free Review Score') + ggtitle("Distance from all previously published faces and **ASS-free** score")
+p
+ggsave(file="./img/optimaldist/pubprev_asskillfree_by_com.jpg")
+
 
 p <- ggplot(pr,aes(d.pub.cumulative, r.mean.clean, color=com))# + scale_colour_discrete(name = "Variable")
 p <- p + geom_jitter(alpha=.2)
@@ -209,58 +253,49 @@ pr$round.cut5 <- cut(pr$round, breaks=seq(0,30,5), labels=cutLabels)
 cutLabels <- c("0-10", "10-20", "20-30")
 pr$round.cut10 <- cut(pr$round, breaks=seq(0,30,10), labels=cutLabels)
 
-p <- ggplot(pr,aes(d.pub.previous, r.mean.clean, color=com))# + scale_colour_discrete(name = "Variable")
+p <- ggplot(pr,aes(d.pub.previous, r.mean.clean, color=com))
 p <- p + geom_jitter(alpha=.2)
-p <- p + geom_smooth()
+p <- p + geom_smooth() + xlab('Distance') + ylab('Clean Review Score') + ggtitle("Distance from all previously published faces\n and **clean** score divided by rounds")
 #p <- p + facet_grid(~round.cut10)
 p <- p + facet_wrap(~round.cut5,ncol=2)
 p
-
+ggsave(file="./img/optimaldist/pubprev_cleanmean_by_rounds_by_com.jpg")
 
 pr$d.pub.previous.cut <- cut(pr$d.pub.previous, breaks=seq(0,max(pr$d.pub.previous,na.rm=T),0.05))
 
 
 pr.clean <- pr[!is.na(pr$d.pub.previous.cut),]
 p <- ggplot(pr.clean,aes(d.pub.previous.cut, color=com))# + scale_colour_discrete(name = "Variable")
-p <- p + geom_boxplot(aes(y=r.mean))
-p <- p + facet_grid(round.cut10~.)
+p <- p + geom_boxplot(aes(y=r.mean.clean)) + xlab('Distance') + ylab('Clean Review Score') + ggtitle("Distributions from all previously published faces\n and **clean** score divided by rounds")
+p <- p + facet_grid(round.cut10~., margin=T)
 #p <- p + facet_wrap(~round.cut5,ncol=2)
 p
-
-pr.clean <- pr[!is.na(pr$d.pub.previous.cut),]
-p <- ggplot(pr.clean,aes(d.pub.previous.cut, color=com))# + scale_colour_discrete(name = "Variable")
-p <- p + geom_boxplot(aes(y=r.mean))
-p <- p + facet_grid(round.cut10~.)
-p
+ggsave(file="./img/optimaldist/pubprev_cleanmean_boxplot_by_round_by_com.jpg")
 
 
 ## Distance from the average face and score
 
-p <- ggplot(pr,aes(dfa.pub.prev, r.mean))# + scale_colour_discrete(name = "Variable")
-p <- p + geom_jitter(alpha=.2)
-p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from faces published in the previous round and score")
-p
-
-
-
-p <- ggplot(pr,aes(dfa.pub.prev, r.mean.clean, color=com))# + scale_colour_discrete(name = "Variable")
-p <- p + geom_jitter(alpha=.2)
-p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from faces published in the previous round and score")
-p
-
-p <- ggplot(pr,aes(dfa.pub.prev, r.mean.clean, color=com))# + scale_colour_discrete(name = "Variable")
-p <- p + geom_jitter(alpha=.2)
-p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from faces published in the previous round and score")
-p
-
-
 p <- ggplot(pr,aes(dfa.pub.prev, r.mean.clean))# + scale_colour_discrete(name = "Variable")
 p <- p + geom_jitter(alpha=.2)
-p <- p + geom_smooth()
-p <- p + facet_grid(~com, labeller=myLabeller) + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from the average published face\n in the previous round and **clean** score")
+p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from **avg-face** published in the previous round\n and **clean** score")
 p
+ggsave(file="./img/optimaldist/dfa_pubprev_cleanmean.jpg")
 
+
+p <- ggplot(pr,aes(dfa.pub.prev, r.mean.clean, color=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from **avg-face** published in the previous round\n and **clean** score")
+p
 ggsave(file="./img/optimaldist/dfa_pubprev_cleanmean_by_com.jpg")
+
+
+p <- ggplot(pr,aes(dfa.pub.prev, r.mean.clean, color=published))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth()
+p <- p + facet_grid(~com, labeller=myLabeller) + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from **avg-face** published in the previous round\n and **clean** score")
+p
+ggsave(file="./img/optimaldist/dfa_pubprev_cleanmean_by_com_by_pub.jpg")
+
 
 p <- ggplot(pr,aes(dfa.pub.prev, r.mean.clean))# + scale_colour_discrete(name = "Variable")
 p <- p + geom_jitter(alpha=.5, aes(color=session))
@@ -281,11 +316,6 @@ par(opar)
 a <- predict(fit,newdata=pr)
 plot(pr$dfa.pub.prev,a)
 
-# There seems to be an optimal distance between paintings and score. This is more true for COM. Although the data are very noisy
-
-
-x dfa.pu
-
 
 a <- loess(pr$dfa.pub.prev ~ pr$r.mean.clean)
 plot(a$x, a$y)
@@ -302,27 +332,22 @@ p <- p + geom_boxplot(aes(y=r.mean),notch=T)
 #p <- p + facet_wrap(~round.cut5,ncol=2)
 p
 
-
-pr$dfa.pub.prev.bigcut <- cut(pr$dfa.pub.prev, breaks=c(0,0.05,0.4,max(pr$dfa.pub.prev,na.rm=T)))
+cutLabels <- c("A", "B", "C")
+cutLabels <- c("Very Similar\n(0-.05)", "Avg Diversity\n(0.05-0.4)", "Highly diverse\n(>0.4)")
+pr$dfa.pub.prev.bigcut <- cut(pr$dfa.pub.prev, breaks=c(0,0.05,0.4,max(pr$dfa.pub.prev,na.rm=T)),labels=cutLabels)
 
 pr.clean <- pr[!is.na(pr$dfa.pub.prev.bigcut),]
-p <- ggplot(pr.clean,aes(dfa.pub.prev.bigcut, color=com))# + scale_colour_discrete(name = "Variable")
-p <- p + geom_boxplot(aes(y=r.mean.clean))
+p <- ggplot(pr.clean,aes(x=dfa.pub.prev.bigcut, color=com))
+p <- p + geom_boxplot(aes(y=r.mean.clean)) + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from the average published face\n in the previous round and **clean** score")
 p
+ggsave(file="./img/optimaldist/dfa_pubprev_cleanmean_by_com_boxplots_bigcuts.jpg")
 
 pr.clean <- pr[!is.na(pr$dfa.pub.prev.bigcut),]
-p <- ggplot(pr.clean,aes(x=r.mean.clean, group=com,color=com))# + scale_colour_discrete(name = "Variable")
+p <- ggplot(pr.clean,aes(x=r.mean.clean, group=com,color=com))
 p <- p + geom_density(aes(fill=com),alpha=0.3)
-p <- p + facet_grid(~dfa.pub.prev.bigcut) 
+p <- p + facet_grid(~dfa.pub.prev.bigcut) + xlab('Clean Review Score') + ylab('Frequency') + ggtitle("Freq. distributions of **clean** review score by diversity group")
 p
-
-p.evas <- ggplot(evas, aes(x=value, group=com, colour=com))
-p.evas.density <- p.evas + geom_density(aes(fill=com),alpha=0.3)
-p.evas.density.title <- p.evas.density + ggtitle("Density curves of ratings by level of competition") 
-p.evas.density.title<- p.evas.density.title + xlab('Rating') + ylab('Density')
-p.evas.density.title
-
-
+ggsave(file="./img/optimaldist/dfa_pubprev_cleanmean_by_com_freqdistr_bigcuts.jpg")
 
 
 ## Other tests
@@ -371,4 +396,15 @@ p
 
 pr$r.mean.from5 <- pr$r.mean - 5
 
-pr$ <- ifelse(pr$published, 
+
+
+### how many 3fives reviews by condition
+
+
+
+pr.clean <- pr[!is.na(pr$e.changed) & pr$e.changed == 0,]
+p <- ggplot(pr.clean,aes(x=as.factor(e.changed), group=com,color=com))
+p <- p + geom_bar(aes(fill=com),alpha=0.3, position="dodge")
+p <- p + facet_grid(~round.cut5) + xlab('Clean Review Score') + ylab('Frequency') + ggtitle("Freq. distributions of **clean** review score by diversity group")
+p
+
