@@ -13,6 +13,15 @@ myLabeller <- function(var, value){
   } 
   return(value)
 }
+
+sd.b <- function(row) {
+  v <- c()
+  v <- c(v,as.numeric(row["r1"]))
+  v <- c(v,as.numeric(row["r2"]))
+  v <- c(v,as.numeric(row["r3"]))
+  return(sd(v))
+}
+
 sd.clean.asskill <- function(row) {
   v <- c()
   if (as.numeric(row["r1.ass.kill"]) == 0) {
@@ -133,9 +142,100 @@ cix.clean <- function(row) {
   }
 }
 
+
+cix.binary <- function(row) {
+  p <- 0
+  r <- 0
+  v <- 0
+  if (!is.na(row["r1"])) {
+    v <- v + 1
+    if (as.numeric(row["r1"]) < 5) {
+      r <- r + 1
+    }
+    else {
+      p <- p + 1
+    }   
+  }
+  if (!is.na(row["r2"])) {
+    v <- v + 1
+    if (as.numeric(row["r2"]) < 5) {
+      r <- r + 1
+    }
+    else {
+      p <- p + 1
+
+    }   
+  }
+  if (!is.na(row["r3"])) {
+    v <- v + 1
+    if (as.numeric(row["r3"]) > 5) {
+      r <- r + 1
+    }
+    else {
+      p <- p + 1
+    }   
+  }
+  if (v < 2) {
+    return(NA)
+  }
+  else if (p == v | r == v) {
+    return(1)
+  }
+  else {
+    return(0)
+  }
+}
+
+cix.binary.clean <- function(row) {
+  p <- 0
+  r <- 0
+  v <- 0
+  if (!is.na(row["r1"]) & !is.na(row["r1.changed"]) & as.numeric(row["r1.changed"]) == 1 & as.numeric(row["r1.ass.kill"]) == 0) {
+    v <- v + 1
+    if (as.numeric(row["r1"]) < 5) {
+      r <- r + 1
+    }
+    else {
+      p <- p + 1
+    }    
+  }
+  if (!is.na(row["r2"]) &!is.na(row["r2.changed"]) & as.numeric(row["r2.changed"]) == 1 & as.numeric(row["r2.ass.kill"]) == 0 ) {
+    v <- v + 1
+    if (as.numeric(row["r2"]) < 5) {
+      r <- r + 1
+    }
+    else {
+      p <- p + 1
+    }   
+  }
+  if (!is.na(row["r3"]) & !is.na(row["r3.changed"]) & as.numeric(row["r3.changed"]) == 1 & as.numeric(row["r3.ass.kill"]) == 0) {
+    v <- v + 1
+    if (as.numeric(row["r3"]) < 5) {
+      r <- r + 1
+    }
+    else {
+      p <- p + 1
+    }   
+  }
+  if (v < 2) {
+    return(NA)
+  }
+  else if (p == v | r == v) {
+    return(1)
+  }
+  else {
+    return(0)
+  }
+}
+
+
 #####################
 ## START
 ####################
+
+# Recomputing the standard deviation of reviews (there was an error)
+pr$r.std.b <- apply(pr,1,sd.b)
+
 
 # Are ratings just spreading out more?
 
@@ -147,25 +247,12 @@ ggsave(file="./img/evas/distribution_reviews_in_time.jpg")
 
 # Shuffle ratings
 
-a <- pr[pr$session ==1 & pr$round == 2,c("r1","r2","r3")]
-
-index <- 1:nrow(a)
-trainindex1 <- sample(index)
-trainindex2 <- sample(index)
-trainindex3 <- sample(index)
-
-r1s <- a[trainindex1,"r1"]
-r2s <- a[trainindex2,"r2"]
-r3s <- a[trainindex3,"r3"]
-as <- cbind(r1s,r2s,r3s)
-
-
 MAXSTD <- sd(c(0,0,10))
 MAXSTD2 <- sd(c(0,10))
 
 
 library(matrixStats)
-ITER <- 100
+ITER <- 1000
 
 stds <- c()
 prs <- pr
@@ -190,34 +277,47 @@ for (i in 1:ITER) {
 }
 pr$rs.sd <- rowMeans(stds)
 
+write.table(pr, file = "all_shuffled_reviews_26jul.csv", sep = ",", col.names = NA,
+            qmethod = "double")
 
 pr$r.consensus <- 1 - pr$r.std / MAXSTD
+pr$r.consensus.b <- 1 - pr$r.std.b / MAXSTD
+
 
 pr$rs.consensus <- 1 - pr$rs.sd / MAXSTD
 
 title <- ggtitle("Consensus among referees")
-p <- ggplot(pr, aes(round, r.consensus))
+p <- ggplot(pr, aes(round, r.consensus.b))
 p <- p + geom_jitter(aes(colour=com), alpha=.2)
 p <- p + geom_smooth(aes(colour=com),size=2)
 p <- p + title + ylab("Consensus Idx") + xlab("Round")
 p
 ggsave(file="./img/ass/consensus_referees.jpg")
 
-title <- ggtitle("Consensus among referees\n shuffled reviews (100x)")
+title <- ggtitle("Consensus among referees\n shuffled reviews (1000x)")
 p <- ggplot(pr, aes(round, rs.consensus))
 p <- p + geom_jitter(aes(colour=com), alpha=.2)
 p <- p + geom_smooth(aes(colour=com),size=2)
 p <- p + title + ylab("Consensus Idx") + xlab("Round")
 p
-ggsave(file="./img/ass/consensus_referees_shuffled_100.jpg")
+ggsave(file="./img/ass/consensus_referees_shuffled_1000.jpg")
 
-title <- ggtitle("Difference in consensus among referees\n original reviews - shuffled reviews (100x)")
-p <- ggplot(pr, aes(round, r.consensus - rs.consensus))
+title <- ggtitle("Difference in consensus among referees\n original reviews - shuffled reviews (1000x)")
+p <- ggplot(pr, aes(round, r.consensus.b - rs.consensus))
 p <- p + geom_jitter(aes(colour=com), alpha=.2)
 p <- p + geom_smooth(aes(colour=com),size=2)
 p <- p + title + ylab("Consensus Idx") + xlab("Round")
 p
-ggsave(file="./img/ass/diff_consensus_referees_original_shuffled_100.jpg")
+ggsave(file="./img/ass/diff_consensus_referees_original_shuffled_1000.jpg")
+
+
+
+title <- ggtitle("Difference in consensus among referees\n original reviews - shuffled reviews (1000x)")
+p <- ggplot(pr, aes(round, r.consensus.b - r.consensus))
+p <- p + geom_jitter(aes(colour=com), alpha=.2)
+p <- p + geom_smooth(aes(colour=com),size=2)
+p <- p + title + ylab("Consensus Idx") + xlab("Round")
+p
 
 
 # What if we remove the ass reviews?
@@ -278,6 +378,54 @@ p <- p + title + ylab("Consensus Idx") + xlab("Round")
 p
 
 ggsave(file="./img/ass/diff_consensus_referees_original_shuffled_100.jpg")
+
+
+
+
+## Binary consensus
+###################
+
+pr$r.consensus.binary <- apply(pr, 1, cix.binary)
+pr$r.consensus.binary.clean <- apply(pr, 1, cix.binary.clean)
+
+pr.clean <- pr[!is.na(pr$r.consensus.binary) & pr$r.consensus.binary == 1,]
+#pr.clean$r.consensus.binary <- as.factor(pr.clean$r.consensus.binary)
+
+p <- ggplot(pr.clean,aes(x=as.factor(round), color=com, group=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_bar(aes(fill=com),alpha=0.3, position="dodge", color="white")
+p <- p + facet_grid(~com) + xlab('Round') + ylab('Count') + ggtitle("Binary agreement (publish/reject) among all reviewers")
+p
+
+pr.clean <- pr[!is.na(pr$r.consensus.binary.clean) & pr$r.consensus.binary.clean == 1,]
+#pr.clean$r.consensus.binary.clean <- as.factor(pr.clean$r.consensus.binary.clean)
+
+p <- ggplot(pr.clean,aes(x=as.factor(round), color=com, group=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_bar(aes(fill=com),alpha=0.3, position="dodge", color="white")
+p <- p + facet_grid(~com) + xlab('Round') + ylab('Count') + ggtitle("Binary agreement (publish/reject) among all reviewers")
+p
+
+ggsave(file="./img/ass/binary_consensus_in_time_by_com.jpg")
+
+pr.clean <- pr[!is.na(pr$r.consensus.binary.clean) & pr$r.consensus.binary.clean == 1,]
+p <- ggplot(pr.clean,aes(x=as.factor(r.consensus.binary.clean), group=com, color=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_bar(aes(fill=com),alpha=0.3, position="dodge")
+p <- p + facet_grid(com~round) + xlab('Round') + ylab('Count') + ggtitle("Binary agreement (publish/reject) among all reviewers (**cleaned**)")
+p
+
+aa <- pr[pr.clean$round == 30,]
+table(aa$r.consensus.binary, aa$com)
+
+mm <- ddply(pr, "round", summarise, mcb = mean(r.consensus.binary.clean, na.rm=T))
+
+groupvars <- c("round","com")
+mm <- summaryPlayers(pr, "r.consensus.binary.clean", groupvars, na.rm=TRUE)
+
+
+title <- ggtitle("Consensus among referees")
+p <- ggplot(mm, aes(round, r.consensus.binary.clean))
+p <- p + geom_line(aes(colour=com),size=2)
+p <- p + title + ylab("Consensus Idx") + xlab("Round")
+p
 
 
 ### Are subjects becoming more different withing one trajectory
