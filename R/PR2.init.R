@@ -181,6 +181,20 @@ lagg <- function(series, nlag=1, FORWARD = FALSE) {
   }
 }
 
+
+myLabeller <- function(var, value){
+  value <- as.character(value)
+  if (var == "published") { 
+    value[value== 0] <- "Rejected"
+    value[value== 1] <- "Published"
+  }
+  else if (var == "com") {
+    value[value== 0] <- "NON-COM"
+    value[value== 1] <- "COM"
+  } 
+  return(value)
+}
+
 #### START ####
 #mysession <- pr[pr$session == 3, ]
 #source('PR_init.R')
@@ -194,7 +208,9 @@ setwd("/var/www/pra/data/ALL/")
 
 #pr <- read.table(file="./allnew.csv", head=TRUE, sep=",")
 #pr <- read.table(file="./allnew_20jul.csv", head=TRUE, sep=",")
-pr <- read.table(file="./allnew_23jul.csv", head=TRUE, sep=",")
+#pr <- read.table(file="./allnew_23jul.csv", head=TRUE, sep=",")
+pr <- read.table(file="./allnew_29jul.csv", head=TRUE, sep=",")
+
 
 
 pr$com <- as.factor(pr$com)
