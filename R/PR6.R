@@ -1,19 +1,6 @@
 source("PR2.init.R")
 library(gvlma)
 
-myLabeller <- function(var, value){
-  value <- as.character(value)
-  if (var == "published") { 
-    value[value== 0] <- "Rejected"
-    value[value== 1] <- "Published"
-  }
-  else if (var == "com") {
-    value[value== 0] <- "NON-COM"
-    value[value== 1] <- "COM"
-  } 
-  return(value)
-}
-
 sd.b <- function(row) {
   v <- c()
   v <- c(v,as.numeric(row["r1"]))
@@ -597,10 +584,17 @@ p
 ggsave(file="./img/optimaldist/dfa_pubprev_cleanmean.jpg")
 
 
-p <- ggplot(pr,aes(dfa.pub.prev, r.mean.clean, color=com))# + scale_colour_discrete(name = "Variable")
+p <- ggplot(pr[pr$com == 0,],aes(dfa.pub.cum, r.mean.clean, color=com))# + scale_colour_discrete(name = "Variable")
 p <- p + geom_jitter(alpha=.2)
 p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from **avg-face** published in the previous round\n and **clean** score")
 p
+
+
+p <- ggplot(pr,aes(dfa.pub.cum, r.mean.clean, color=com))# + scale_colour_discrete(name = "Variable")
+p <- p + geom_jitter(alpha=.2)
+p <- p + geom_smooth() + xlab('Distance') + ylab('Review Score') + ggtitle("Distance from **avg-face** published in the previous round\n and **clean** score")
+p
+
 ggsave(file="./img/optimaldist/dfa_pubprev_cleanmean_by_com.jpg")
 
 

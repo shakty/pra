@@ -1,14 +1,14 @@
 var fs = require('fs'),
-	path = require('path'),
-	csv = require('ya-csv'),
-	NDDB = require('NDDB').NDDB,
-	J = require('JSUS').JSUS,
-	d3 = require('d3'),
-	pra = require('pra-core');
+path = require('path'),
+csv = require('ya-csv'),
+NDDB = require('NDDB').NDDB,
+J = require('JSUS').JSUS,
+d3 = require('d3'),
+pra = require('pra-core');
 
 
 var times = fs.readFileSync('./data/times.js', 'utf-8');
-	times = JSON.parse(times);
+times = JSON.parse(times);
 
 var distFromAvgFace = pra.R.distanceFromAvgFace;
 var computeAvgFace = pra.R.averageFace;
@@ -16,127 +16,127 @@ var computeAvgFace = pra.R.averageFace;
 var fnames = pra.featnamesR.all;
 
 var sessions = {
-             // 25 JAN 2013
-             'com_rand_25_jan_2013': {
-            	 date: '25-01-2013',
-            	 after: 0,
-            	 morn: 1,
-            	 id: 1,
-            	 serverdir: '25Jan2013/games/com_rand_1/server/out/'
-             },
-             'com_choice_25_jan_2013': {
-        	 	date: '25-01-2013',
-        	 	after: 1,
-        	 	morn: 0,
-        	 	id: 2,
-        	 	serverdir: '25Jan2013/games/PR4/server/out/'
-        	 },
-             // 30 JAN 2013
-             'coo_rand_30_jan_2013': {
-            	 date: '30-01-2013',
-            	 after: 0,
-            	 morn: 1,
-         	 	 id: 3,
-         	 	 serverdir: '30Jan2013/games/coo_rand/server/out/'
-             },
-             'coo_choice_30_jan_2013': {
-            	 date: '30-01-2013',
-            	 after: 1,
-            	 morn: 0,
-         	 	 id: 4,
-         	 	 serverdir: '30Jan2013/games/coo_choice/server/out/'
-             },
-             // 31 JAN 2013
-             'com_choice_31_jan_2013': {
-            	 date: '31-01-2013',
-            	 after: 0,
-            	 morn: 1,
-         	 	 id: 5,
-         	 	 serverdir: '31Jan2013/games/com_choice/server/out/'
-             },
-             'coo_rand_31_jan_2013': {
-            	 date: '31-01-2013',
-            	 after: 1,
-            	 morn: 0,
-         	 	 id: 6,
-         	 	 serverdir: '31Jan2013/games/coo_rand/server/out/'
-             },
-             // 1 FEB 2013
-             'com_rand_1_feb_2013': {
-            	 date: '01-02-2013',
-            	 after: 1,
-            	 morn: 0,
-         	 	 id: 7,
-         	 	 serverdir: '1Feb2013/games/com_rand/server/out/'
-             },
-             'coo_choice_1_feb_2013': {
-            	 date: '01-02-2013',
-            	 after: 0,
-            	 morn: 1,
-         	 	 id: 8,
-         	 	 serverdir: '1Feb2013/games/coo_choice/server/out/'
-             },
-             // 4 FEB 2013
-             'com_rand_4_feb_2013': {
-            	 date: '04-02-2013',
-            	 after: 1,
-            	 morn: 0,
-         	 	 id: 9,
-         	 	 serverdir: '4Feb2013/games/com_rand/server/out/'
-             },
-             'coo_rand_4_feb_2013': {
-            	 date: '04-02-2013',
-            	 after: 0,
-            	 morn: 1,
-         	 	 id: 10,
-         	 	 serverdir: '4Feb2013/games/coo_rand/server/out/'
-             },
-             // 6 FEB 2013
-             'coo_choice_6_feb_2013': {
-            	 date: '06-02-2013',
-            	 after: 0,
-            	 morn: 1,
-         	 	 id: 11,
-         	 	 serverdir: '6Feb2013/games/coo_choice/server/out/'
-             },
-             'com_choice_6_feb_2013': {
-            	 date: '06-02-2013',
-            	 after: 1,
-            	 morn: 0,
-         	 	 id: 12,
-         	 	serverdir: '6Feb2013/games/com_choice/server/out/'
-             },
-             // 7 FEB 2013
-             'com_rand_7_feb_2013': {
-            	 date: '07-02-2013',
-            	 after: 0,
-            	 morn: 1,
-         	 	 id: 13,
-         	 	 serverdir: '7Feb2013/games/com_rand/server/out/'
-             },
-             'coo_rand_7_feb_2013': {
-            	 date: '07-02-2013',
-            	 after: 1,
-            	 morn: 0,
-         	 	 id: 14,
-         	 	 serverdir: '7Feb2013/games/coo_rand/server/out/'
-            	 
-             },
-             // 8 FEB 2013
-             'com_choice_8_feb_2013': {
-            	 date: '08-02-2013',
-            	 after: 0,
-            	 morn: 1,
-         	 	 id: 15,
-         	 	 serverdir: '8Feb2013/games/com_choice/server/out/'
-             },
-             'coo_choice_8_feb_2013': {
-            	 date: '08-02-2013',
-            	 after: 1,
-            	 morn: 0,
-         	 	 id: 16,
-         	 	 serverdir: '1Feb2013/games/coo_choice/server/out/'
-             }
+    // 25 JAN 2013
+    'com_rand_25_jan_2013': {
+        date: '25-01-2013',
+        after: 0,
+        morn: 1,
+        id: 1,
+        serverdir: '25Jan2013/games/com_rand_1/server/out/'
+    },
+    'com_choice_25_jan_2013': {
+        date: '25-01-2013',
+        after: 1,
+        morn: 0,
+        id: 2,
+        serverdir: '25Jan2013/games/PR4/server/out/'
+    },
+    // 30 JAN 2013
+    'coo_rand_30_jan_2013': {
+        date: '30-01-2013',
+        after: 0,
+        morn: 1,
+        id: 3,
+        serverdir: '30Jan2013/games/coo_rand/server/out/'
+    },
+    'coo_choice_30_jan_2013': {
+        date: '30-01-2013',
+        after: 1,
+        morn: 0,
+        id: 4,
+        serverdir: '30Jan2013/games/coo_choice/server/out/'
+    },
+    // 31 JAN 2013
+    'com_choice_31_jan_2013': {
+        date: '31-01-2013',
+        after: 0,
+        morn: 1,
+        id: 5,
+        serverdir: '31Jan2013/games/com_choice/server/out/'
+    },
+    'coo_rand_31_jan_2013': {
+        date: '31-01-2013',
+        after: 1,
+        morn: 0,
+        id: 6,
+        serverdir: '31Jan2013/games/coo_rand/server/out/'
+    },
+    // 1 FEB 2013
+    'com_rand_1_feb_2013': {
+        date: '01-02-2013',
+        after: 1,
+        morn: 0,
+        id: 7,
+        serverdir: '1Feb2013/games/com_rand/server/out/'
+    },
+    'coo_choice_1_feb_2013': {
+        date: '01-02-2013',
+        after: 0,
+        morn: 1,
+        id: 8,
+        serverdir: '1Feb2013/games/coo_choice/server/out/'
+    },
+    // 4 FEB 2013
+    'com_rand_4_feb_2013': {
+        date: '04-02-2013',
+        after: 1,
+        morn: 0,
+        id: 9,
+        serverdir: '4Feb2013/games/com_rand/server/out/'
+    },
+    'coo_rand_4_feb_2013': {
+        date: '04-02-2013',
+        after: 0,
+        morn: 1,
+        id: 10,
+        serverdir: '4Feb2013/games/coo_rand/server/out/'
+    },
+    // 6 FEB 2013
+    'coo_choice_6_feb_2013': {
+        date: '06-02-2013',
+        after: 0,
+        morn: 1,
+        id: 11,
+        serverdir: '6Feb2013/games/coo_choice/server/out/'
+    },
+    'com_choice_6_feb_2013': {
+        date: '06-02-2013',
+        after: 1,
+        morn: 0,
+        id: 12,
+        serverdir: '6Feb2013/games/com_choice/server/out/'
+    },
+    // 7 FEB 2013
+    'com_rand_7_feb_2013': {
+        date: '07-02-2013',
+        after: 0,
+        morn: 1,
+        id: 13,
+        serverdir: '7Feb2013/games/com_rand/server/out/'
+    },
+    'coo_rand_7_feb_2013': {
+        date: '07-02-2013',
+        after: 1,
+        morn: 0,
+        id: 14,
+        serverdir: '7Feb2013/games/coo_rand/server/out/'
+        
+    },
+    // 8 FEB 2013
+    'com_choice_8_feb_2013': {
+        date: '08-02-2013',
+        after: 0,
+        morn: 1,
+        id: 15,
+        serverdir: '8Feb2013/games/com_choice/server/out/'
+    },
+    'coo_choice_8_feb_2013': {
+        date: '08-02-2013',
+        after: 1,
+        morn: 0,
+        id: 16,
+        serverdir: '1Feb2013/games/coo_choice/server/out/'
+    }
 };
 
 
@@ -269,7 +269,7 @@ var headings = [
     'ass',
     'ass.kill',
     'ass.love',            
-  
+    
     // assness per review
     'r1.ass.kill',
     'r1.ass.love',
@@ -328,7 +328,7 @@ var db2 = new NDDB(); // here we save new computations
 
 //return;
 db.loadCSV(filein, function(o) {
-    console.log('DONE');
+    console.log('LOADED');
     //writer.writeRecord(J.obj2Array(i));
     console.log(db.size());
     db.rebuildIndexes();
@@ -354,50 +354,71 @@ db.loadCSV(filein, function(o) {
                     console.log('Opss! Something wrong happened');
                 }
                 player = player.first();
-               
-                face = pra.R.getFaceFromRow(player);
-         
-                dfa_subcurr = distFromAvgFace(face, facesRound);
-                
-                if (r === 1) {
+
+                // these are all NAs
+                if (s == 14 && r > 26) {
                     dfa_pubprev = 'NA';
                     dfa_subprev = 'NA';
                     dfa_pubcum = 'NA';
+                    dfa_subcurr = 'NA';
                 }
                 else {
-                    tmpdbRoundPrev = db.sessionround[s + '_' + (r-1)];
                     
-                    // Published at R-1
-                    pubFacesOld = pra.R.getPublishedFaces(tmpdbRoundPrev, r-1, false);
-                    if (pubFacesOld.length === 0) {
-                        dfa_pubprev = 'NA';
-                    }
-                    else {
-                        dfa_pubprev = distFromAvgFace(face, pubFacesOld);
-                    }
+                    face = pra.R.getFaceFromRow(player);
 
-                    // Published until R-1
-                    pubFacesOldCum = pra.R.getPublishedFaces(tmpdbSession, r-1, true);
-                    if (pubFacesOldCum.length === 0) {
+                    dfa_subcurr = distFromAvgFace(face, facesRound);
+                    if (isNaN(dfa_subcurr)) {
+                        debugger;
+                    }
+                    
+                    
+                    if (r === 1) {
+                        dfa_pubprev = 'NA';
+                        dfa_subprev = 'NA';
                         dfa_pubcum = 'NA';
                     }
                     else {
-                        dfa_pubcum = distFromAvgFace(face, pubFacesOld);
+                        tmpdbRoundPrev = db.sessionround[s + '_' + (r-1)];
+                        
+                        // Published at R-1
+                        pubFacesOld = pra.R.getPublishedFaces(tmpdbRoundPrev, r-1, false);
+                        if (pubFacesOld.length === 0) {
+                            dfa_pubprev = 'NA';
+                        }
+                        else {
+                            dfa_pubprev = distFromAvgFace(face, pubFacesOld);
+                            if (isNaN(dfa_pubprev)) {
+                                debugger;
+                            }
+                        }
+
+                        // Published until R-1
+                        pubFacesOldCum = pra.R.getPublishedFaces(tmpdbSession, r-1, true);
+                        if (pubFacesOldCum.length === 0) {
+                            dfa_pubcum = 'NA';
+                        }
+                        else {
+                            dfa_pubcum = distFromAvgFace(face, pubFacesOldCum);
+                            if (isNaN(dfa_pubcum)) {
+                                debugger;
+                            }
+                        }
+
+                        // Submitted at R-1
+                        subFacesOld = tmpdbRoundPrev.fetchSubObj(fnames);
+                        dfa_subprev = distFromAvgFace(face, subFacesOld);
+                        if (isNaN(dfa_subprev)) {
+                            debugger;
+                        }
                     }
 
-                    // Submitted at R-1
-                    subFacesOld = tmpdbRoundPrev.fetchSubObj(fnames);
-                    dfa_subprev = distFromAvgFace(face, subFacesOld);
+                    
                 }
-
-//              console.log(dfa_pubprev);
-//              console.log(dfa_subprev);
-//              console.log(dfa_pubcum);
-//              console.log(dfa_subcurr);
-            
-                // Do it from session to session
-
                 
+                //              console.log(dfa_pubprev);
+                //              console.log(dfa_subprev);
+                //              console.log(dfa_pubcum);
+                //              console.log(dfa_subcurr);
                 
                 player['dfa.pubprev'] = dfa_pubprev;
                 player['dfa.subprev'] = dfa_subprev;
@@ -405,18 +426,12 @@ db.loadCSV(filein, function(o) {
                 player['dfa.subcurr'] = dfa_subcurr;
                 
                 writer.writeRecord(J.obj2Array(player));
+                
             });
-            
-
             
         }
     }
 
-    
-    
-    
-    
-    
 });
 
 
