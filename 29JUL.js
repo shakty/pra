@@ -412,7 +412,7 @@ var meanArr = function(ar) {
 }
 
 var sdComp = function(sum, sum2, N) {
-    return (sum2 - (Math.pow(sum,2) / N)) / (N-1)
+    return Math.sqrt((sum2 - (Math.pow(sum,2) / N)) / (N-1))
 }
 
 //return;
@@ -516,7 +516,7 @@ db.loadCSV(filein, function(o) {
                             }
 
                             // Published until R-1
-                            pubFacesOldCum = pra.R.getPublishedFaces(tmpdbSession, r-1, true);
+                            pubFacesOldCum = pra.R.getPublishedFaces(tmpdbRoundPrev, r-1, true);
                             if (pubFacesOldCum.length === 0) {
                                 dse_pubcum = 'NA';
                             }
